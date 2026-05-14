@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#111111">
+  <title>Meal Plan</title>
+  <style>
+    :root {
+      --bg:        #111111;
+      --surface:   #1a1a1a;
+      --border:    #2a2a2a;
+      --text:      #e0e0e0;
+      --dim:       #555555;
+      --orange:    #FFAA00;
+      --green:     #88DD88;
+      --cyan:      #00CCFF;
+      --yellow:    #FFE066;
+      --pink:      #FF88CC;
+      --mint:      #55DDBB;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      min-height: 100vh;
+      padding: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ── Day header ── */
+    .day-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--orange);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .day-num {
+      color: var(--orange);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .day-meta { text-align: right; }
+    .day-cal  { color: var(--green); font-size: 14px; font-weight: 600; }
+    .day-fast { color: var(--dim); font-size: 12px; margin-top: 2px; }
+
+    /* ── Meal cards ── */
+    .meal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+
+    .meal-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .meal-icon  { font-size: 20px; }
+    .meal-info  { flex: 1; }
+    .meal-label { font-weight: 700; font-size: 14px; letter-spacing: 0.5px; }
+    .meal-time  { color: var(--dim); font-size: 12px; margin-top: 1px; }
+    .meal-cal   { color: var(--green); font-size: 13px; font-weight: 600; }
+
+    .breakfast .meal-label { color: var(--cyan); }
+    .snack     .meal-label { color: var(--yellow); }
+    .dinner    .meal-label { color: var(--pink); }
+    .evening   .meal-label { color: var(--mint); }
+
+    .breakfast { border-left: 3px solid var(--cyan); }
+    .snack     { border-left: 3px solid var(--yellow); }
+    .dinner    { border-left: 3px solid var(--pink); }
+    .evening   { border-left: 3px solid var(--mint); }
+
+    /* ── Food items ── */
+    .food-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .food-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .food-name { color: var(--text); font-size: 14px; }
+    .food-dots {
+      flex: 1;
+      border-bottom: 1px dotted var(--border);
+      margin: 0 4px 3px;
+    }
+    .food-qty  { color: var(--dim); font-size: 13px; white-space: nowrap; }
+
+    /* ── Fasting screen ── */
+    .fasting-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--cyan);
+      border-radius: 12px;
+      padding: 32px 20px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .fasting-title    { color: var(--cyan); font-size: 18px; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
+    .fasting-sub      { color: var(--dim); font-size: 13px; margin-bottom: 24px; }
+    .fasting-countdown { color: var(--yellow); font-size: 48px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+    .fasting-label    { color: var(--dim); font-size: 13px; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      color: var(--border);
+      font-size: 11px;
+      margin-top: 8px;
+      padding-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+<script>
+const DAYS = [
+  {
+    num: 'DAY 1', cal: '~2240 cal',
+    meals: {
+      breakfast: { time: '12:00 pm', cal: '~540 cal', items: [
+        ['Scrambled eggs',          '3 large'],
+        ['Sourdough toast',         '2 slices'],
+        ['Butter',                  '1 tsp'],
+        ['Hot sauce',               'to taste'],
+        ['Green tea',               '1 cup'],
+      ]},
+      snack: { time: '3:30 pm', cal: '~300 cal', items: [
+        ['Greek yogurt 2%',         '1 cup'],
+        ['Kirkland mixed nuts',     '1 oz'],
+        ['Chia seeds',              '1 tbsp'],
+      ]},
+      dinner: { time: '6:30 pm', cal: '~740 cal', items: [
+        ['Chicken breast',          '6 oz'],
+        ['Brown rice',              '1 cup cooked'],
+        ['Broccoli',                '1 cup steamed'],
+        ['Olive oil',               '1 tbsp'],
+        ['Lemon',                   'half'],
+        ['Garlic powder + paprika', 'to taste'],
+      ]},
+      evening: { time: '7:30 pm', cal: '~220 cal', items: [
+        ['Kirkland nut butter',     '2 tbsp'],
+        ['Dark chocolate 70%',      '2 squares'],
+      ]},
+    }
+  },
+  {
+    num: 'DAY 2', cal: '~2260 cal',
+    meals: {
+      breakfast: { time: '12:00 pm', cal: '~560 cal', items: [
+        ['Bolthouse Green Goodness','1 bottle'],
+        ['Hard boiled eggs',        '3 eggs'],
+        ['Kirkland nut butter',     '1 tbsp'],
+      ]},
+      snack: { time: '3:30 pm', cal: '~280 cal', items: [
+        ['Greek yogurt 2%',         '1 cup'],
+        ['Chia seeds',              '1 tbsp'],
+        ['Kirkland mixed nuts',     'half oz'],
+      ]},
+      dinner: { time: '6:30 pm', cal: '~750 cal', items: [
+        ['Chicken thighs skinless', '6 oz'],
+        ['Quinoa',                  '3/4 cup cooked'],
+        ['Frozen veggie mix',       '1 cup'],
+        ['Olive oil',               '1 tbsp'],
+        ['Cumin + garlic powder',   'to taste'],
+      ]},
+      evening: { time: '7:30 pm', cal: '~220 cal', items: [
+        ['Hard boiled eggs',        '3 eggs'],
+        ['Hot sauce',               'to taste'],
+        ['Dark chocolate',          '1 square'],
+      ]},
+    }
+  },
+  {
+    num: 'DAY 3', cal: '~2280 cal',
+    meals: {
+      breakfast: { time: '12:00 pm', cal: '~570 cal', items: [
+        ['Eggs (3 whole + 2 whites)',''],
+        ['Feta cheese',             '1 oz'],
+        ['Tomato + frozen veg',     'half cup'],
+        ['Sourdough toast',         '1 slice'],
+        ['Butter',                  '1 tsp'],
+      ]},
+      snack: { time: '3:30 pm', cal: '~300 cal', items: [
+        ['Greek yogurt 2%',         '1 cup'],
+        ['Kirkland mixed nuts',     '1 oz'],
+        ['Dark chocolate 70%',      '1 square'],
+      ]},
+      dinner: { time: '6:30 pm', cal: '~760 cal', items: [
+        ['Lean beef strips',        '6 oz'],
+        ['Brown rice',              '1 cup cooked'],
+        ['Frozen veg + broccoli',   '1.5 cups'],
+        ['Soy sauce low sodium',    '1 tbsp'],
+        ['Sesame oil',              '1 tbsp'],
+        ['Garlic powder',           'to taste'],
+      ]},
+      evening: { time: '7:30 pm', cal: '~220 cal', items: [
+        ['Sourdough bread',         '1 slice'],
+        ['Kirkland nut butter',     '2 tbsp'],
+      ]},
+    }
+  },
+  {
+    num: 'DAY 4', cal: '~2230 cal',
+    meals: {
+      breakfast: { time: '12:00 pm', cal: '~520 cal', items: [
+        ['Scrambled eggs',          '3 large'],
+        ['Feta cheese',             '1 oz'],
+        ['Sourdough toast',         '2 slices'],
+        ['Hot sauce',               'to taste'],
+        ['Oolong tea',              '1 cup'],
+      ]},
+      snack: { time: '3:30 pm', cal: '~290 cal', items: [
+        ['Kirkland nut butter',     '2 tbsp'],
+        ['Kirkland mixed nuts',     'half oz'],
+        ['Dark chocolate 70%',      '2 squares'],
+      ]},
+      dinner: { time: '6:30 pm', cal: '~760 cal', items: [
+        ['Lean ground beef 90/10',  '6 oz'],
+        ['Lentils',                 '1/4 cup cooked'],
+        ['Brown rice',              '3/4 cup cooked'],
+        ['Frozen veggie mix',       '1 cup'],
+        ['Olive oil',               '1 tbsp'],
+        ['Cumin + paprika',         'to taste'],
+      ]},
+      evening: { time: '7:30 pm', cal: '~220 cal', items: [
+        ['Greek yogurt 2%',         '3/4 cup'],
+        ['Chia seeds',              '1 tbsp'],
+        ['Kirkland mixed nuts',     'half oz'],
+      ]},
+    }
+  },
+  {
+    num: 'DAY 5', cal: '~2250 cal',
+    meals: {
+      breakfast: { time: '12:00 pm', cal: '~540 cal', items: [
+        ['Fried eggs',              '3 large'],
+        ['Sourdough toast',         '2 slices'],
+        ['Butter',                  '1 tsp'],
+        ['Hot sauce',               'to taste'],
+        ['Green tea',               '1 cup'],
+      ]},
+      snack: { time: '3:30 pm', cal: '~300 cal', items: [
+        ['Greek yogurt 2%',         '1 cup'],
+        ['Kirkland nut butter',     '1 tbsp'],
+        ['Chia seeds',              '1 tbsp'],
+      ]},
+      dinner: { time: '6:30 pm', cal: '~750 cal', items: [
+        ['Chicken thighs skinless', '6 oz'],
+        ['Black beans',             'half cup'],
+        ['Frozen veggie mix',       '1 cup'],
+        ['Olive oil',               '1 tbsp'],
+        ['Cumin + garlic powder',   'to taste'],
+        ['Lemon',                   'half'],
+      ]},
+      evening: { time: '7:30 pm', cal: '~220 cal', items: [
+        ['Hard boiled eggs',        '2 eggs'],
+        ['Kirkland mixed nuts',     '1 oz'],
+      ]},
+    }
+  },
+  {
+    num: 'DAY 6', cal: '~2240 cal',
+    meals: {
+      breakfast: { time: '12:00 pm', cal: '~550 cal', items: [
+        ['Bolthouse Green Goodness','1 bottle'],
+        ['Hard boiled eggs',        '2 eggs'],
+        ['Kirkland nut butter',     '1 tbsp'],
+      ]},
+      snack: { time: '3:30 pm', cal: '~290 cal', items: [
+        ['Greek yogurt 2%',         '1 cup'],
+        ['Kirkland mixed nuts',     '1 oz'],
+        ['Chia seeds',              '1 tsp'],
+      ]},
+      dinner: { time: '6:30 pm', cal: '~750 cal', items: [
+        ['Lean ground beef 90/10',  '6 oz'],
+        ['Quinoa',                  '3/4 cup cooked'],
+        ['Broccoli',                '1 cup steamed'],
+        ['Olive oil',               '1 tbsp'],
+        ['Onion powder + paprika',  'to taste'],
+      ]},
+      evening: { time: '7:30 pm', cal: '~220 cal', items: [
+        ['Scrambled eggs',          '2 large'],
+        ['Shredded cheddar',        '1 oz'],
+        ['Hot sauce',               'to taste'],
+      ]},
+    }
+  },
+  {
+    num: 'DAY 7', cal: '~2260 cal',
+    meals: {
+      breakfast: { time: '12:00 pm', cal: '~560 cal', items: [
+        ['Scrambled eggs',          '3 large'],
+        ['Shredded cheddar',        '1 oz'],
+        ['Frozen veggie mix',       'half cup'],
+        ['Sourdough toast',         '2 slices'],
+        ['Ginger tea',              '1 cup'],
+      ]},
+      snack: { time: '3:30 pm', cal: '~290 cal', items: [
+        ['Greek yogurt 2%',         '1 cup'],
+        ['Chia seeds',              '1 tbsp'],
+        ['Kirkland mixed nuts',     'half oz'],
+      ]},
+      dinner: { time: '6:30 pm', cal: '~760 cal', items: [
+        ['Lean beef strips',        '6 oz'],
+        ['Black beans',             'half cup'],
+        ['Brown rice',              '3/4 cup cooked'],
+        ['Frozen veggie mix',       '1 cup'],
+        ['Soy sauce low sodium',    '1 tbsp'],
+        ['Sesame oil',              '1 tbsp'],
+        ['Garlic powder + cumin',   'to taste'],
+      ]},
+      evening: { time: '7:30 pm', cal: '~210 cal', items: [
+        ['Kirkland nut butter',     '2 tbsp'],
+        ['Dark chocolate 70%',      '2 squares'],
+      ]},
+    }
+  },
+];
+
+const MEAL_ORDER = [
+  { key: 'breakfast', label: 'BREAK FAST',   cls: 'breakfast', icon: '🍳', threshold: 12 * 60 },
+  { key: 'snack',     label: 'SNACK',         cls: 'snack',     icon: '🥜', threshold: 15 * 60 + 30 },
+  { key: 'dinner',    label: 'DINNER',        cls: 'dinner',    icon: '🍽️', threshold: 18 * 60 + 30 },
+  { key: 'evening',   label: 'EVENING SNACK', cls: 'evening',   icon: '🍫', threshold: 19 * 60 + 30 },
+];
+
+function seededRandom(seed) {
+  let s = seed % 2147483647;
+  s = (s * 16807) % 2147483647;
+  return (s - 1) / 2147483646;
+}
+
+function todayIndex() {
+  const d = new Date();
+  const seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+  return Math.floor(seededRandom(seed) * DAYS.length);
+}
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function fmt12(h, m) {
+  const ampm = h < 12 ? 'am' : 'pm';
+  return `${h % 12 || 12}:${pad(m)} ${ampm}`;
+}
+
+function render() {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes();
+  const t = h * 60 + m;
+  const day = DAYS[todayIndex()];
+  let html = '';
+
+  // Day header card
+  html += `
+    <div class="day-card">
+      <div class="day-num">${day.num}</div>
+      <div class="day-meta">
+        <div class="day-cal">${day.cal}</div>
+        <div class="day-fast">12 pm – 8 pm window</div>
+      </div>
+    </div>`;
+
+  if (t < 12 * 60) {
+    const rem  = 12 * 60 - t;
+    const rh   = Math.floor(rem / 60);
+    const rm   = rem % 60;
+    const disp = rh > 0 ? `${rh}:${pad(rm)}` : `${rm}m`;
+    html += `
+      <div class="fasting-card">
+        <div class="fasting-title">FASTING WINDOW</div>
+        <div class="fasting-sub">Coffee OK · break fast at 12:00 pm</div>
+        <div class="fasting-countdown">${disp}</div>
+        <div class="fasting-label">remaining</div>
+      </div>`;
+  } else {
+    for (const { key, label, cls, icon, threshold } of MEAL_ORDER) {
+      if (t < threshold) break;
+      const meal = day.meals[key];
+      let items = '';
+      for (const [name, qty] of meal.items) {
+        items += `
+          <div class="food-item">
+            <span class="food-name">${name}</span>
+            ${qty ? `<span class="food-dots"></span><span class="food-qty">${qty}</span>` : ''}
+          </div>`;
+      }
+      html += `
+        <div class="meal-card ${cls}">
+          <div class="meal-header">
+            <span class="meal-icon">${icon}</span>
+            <div class="meal-info">
+              <div class="meal-label">${label}</div>
+              <div class="meal-time">${meal.time}</div>
+            </div>
+            <div class="meal-cal">${meal.cal}</div>
+          </div>
+          <div class="food-list">${items}</div>
+        </div>`;
+    }
+  }
+
+  html += `<div class="footer">updated ${fmt12(h, m)}</div>`;
+  document.body.innerHTML = html;
+}
+
+render();
+setInterval(render, 60000);
+</script>
+</body>
+</html>
