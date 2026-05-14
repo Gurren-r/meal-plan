@@ -369,7 +369,6 @@ function fmt12(h, m) {
 function render() {
   const now = new Date();
   const h = now.getHours(), m = now.getMinutes();
-  const t = h * 60 + m;
   const day = DAYS[todayIndex()];
   let html = '';
 
@@ -383,22 +382,8 @@ function render() {
       </div>
     </div>`;
 
-  if (t < 12 * 60) {
-    const rem  = 12 * 60 - t;
-    const rh   = Math.floor(rem / 60);
-    const rm   = rem % 60;
-    const disp = rh > 0 ? `${rh}:${pad(rm)}` : `${rm}m`;
-    html += `
-      <div class="fasting-card">
-        <div class="fasting-title">FASTING WINDOW</div>
-        <div class="fasting-sub">Coffee OK · break fast at 12:00 pm</div>
-        <div class="fasting-countdown">${disp}</div>
-        <div class="fasting-label">remaining</div>
-      </div>`;
-  } else {
-    for (const { key, label, cls, icon, threshold } of MEAL_ORDER) {
-      if (t < threshold) break;
-      const meal = day.meals[key];
+  for (const { key, label, cls, icon } of MEAL_ORDER) {
+    const meal = day.meals[key];
       let items = '';
       for (const [name, qty] of meal.items) {
         items += `
