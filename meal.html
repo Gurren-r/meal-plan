@@ -7,6 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#111111">
   <title>Meal Plan</title>
+  <link rel="manifest" href="manifest.json">
   <style>
     :root {
       --bg:        #111111;
@@ -426,6 +427,10 @@ function render() {
 
 render();
 setInterval(render, 60000);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
 </script>
 </body>
 </html>
