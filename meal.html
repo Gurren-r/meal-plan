@@ -124,6 +124,25 @@
     .fasting-countdown { color: var(--yellow); font-size: 48px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
     .fasting-label    { color: var(--dim); font-size: 13px; }
 
+    /* ── Streak card ── */
+    .streak-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .streak-fire { font-size: 32px; line-height: 1; }
+    .streak-info { flex: 1; }
+    .streak-num  { font-size: 28px; font-weight: 700; color: var(--orange); line-height: 1; }
+    .streak-num span { font-size: 14px; font-weight: 400; color: var(--dim); margin-left: 4px; }
+    .streak-sub  { color: var(--dim); font-size: 12px; margin-top: 3px; }
+    .streak-best { font-size: 12px; color: var(--dim); text-align: right; }
+    .streak-best strong { color: var(--yellow); }
+
     /* ── Chicken progress bar ── */
     .chicken-bar {
       background: var(--surface);
@@ -410,6 +429,31 @@ function planIndex() {
   return ((days % DAYS.length) + DAYS.length) % DAYS.length;
 }
 
+// ── Fasting streak ──────────────────────────────────────────
+function dateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function loadStreak() {
+  try { return JSON.parse(localStorage.getItem('fastStreak')) || { streak: 0, best: 0, lastDate: null }; }
+  catch { return { streak: 0, best: 0, lastDate: null }; }
+}
+
+function recordStreak() {
+  const now   = new Date();
+  const today = dateStr(now);
+  const data  = loadStreak();
+  if (now.getHours() < 12) return data; // before noon — not earned yet
+  if (data.lastDate === today) return data; // already recorded today
+
+  const yesterday = dateStr(new Date(now.getTime() - 24 * 60 * 60 * 1000));
+  const newStreak = data.lastDate === yesterday ? data.streak + 1 : 1;
+  const newBest   = Math.max(newStreak, data.best || 0);
+  const updated   = { streak: newStreak, best: newBest, lastDate: today };
+  localStorage.setItem('fastStreak', JSON.stringify(updated));
+  return updated;
+}
+
 function pad(n) { return String(n).padStart(2, '0'); }
 
 function fmt12(h, m) {
@@ -431,6 +475,23 @@ function render() {
         <div class="day-cal">${day.cal}</div>
         <div class="day-fast">12 pm – 8 pm window</div>
       </div>
+    </div>`;
+
+  // Streak card
+  const sd = recordStreak();
+  const fireEmoji = sd.streak >= 30 ? '🔥🔥🔥' : sd.streak >= 7 ? '🔥🔥' : '🔥';
+  const streakSub = sd.streak === 0
+    ? 'Complete your fast today to start a streak'
+    : sd.streak === 1 ? 'First day — keep it going!'
+    : `${sd.streak} days in a row`;
+  html += `
+    <div class="streak-card">
+      <div class="streak-fire">${fireEmoji}</div>
+      <div class="streak-info">
+        <div class="streak-num">${sd.streak}<span>day streak</span></div>
+        <div class="streak-sub">${streakSub}</div>
+      </div>
+      <div class="streak-best">best<br><strong>${sd.best}</strong></div>
     </div>`;
 
   // Chicken progress bar — eating window 12pm (720) to 8pm (1200)
