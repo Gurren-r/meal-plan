@@ -353,11 +353,7 @@ function seededRandom(seed) {
   return (s - 1) / 2147483646;
 }
 
-function todayIndex() {
-  const d = new Date();
-  const seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
-  return Math.floor(seededRandom(seed) * DAYS.length);
-}
+let currentIndex = 0;
 
 function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -369,13 +365,13 @@ function fmt12(h, m) {
 function render() {
   const now = new Date();
   const h = now.getHours(), m = now.getMinutes();
-  const day = DAYS[todayIndex()];
+  const day = DAYS[currentIndex];
   let html = '';
 
   // Day header card
   html += `
     <div class="day-card">
-      <div class="day-num">TODAY'S PLAN</div>
+      <div class="day-num">PLAN ${currentIndex + 1} / ${DAYS.length}</div>
       <div class="day-meta">
         <div class="day-cal">${day.cal}</div>
         <div class="day-fast">12 pm – 8 pm window</div>
@@ -411,7 +407,10 @@ function render() {
 }
 
 render();
-setInterval(render, 60000);
+setInterval(() => {
+  currentIndex = (currentIndex + 1) % DAYS.length;
+  render();
+}, 10000);
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js');
