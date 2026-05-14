@@ -142,6 +142,21 @@
     .streak-sub  { color: var(--dim); font-size: 12px; margin-top: 3px; }
     .streak-best { font-size: 12px; color: var(--dim); text-align: right; }
     .streak-best strong { color: var(--yellow); }
+    .streak-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .streak-btn:active { transform: scale(0.97); }
+    .streak-btn.ready  { background: var(--orange); color: #111; }
+    .streak-btn.done   { background: var(--border); color: var(--dim); cursor: default; }
+    .streak-btn.early  { background: var(--border); color: var(--dim); cursor: default; }
 
     /* ── Chicken progress bar ── */
     .chicken-bar {
@@ -439,12 +454,11 @@ function loadStreak() {
   catch { return { streak: 0, best: 0, lastDate: null }; }
 }
 
-function recordStreak() {
+function claimStreak() {
   const now   = new Date();
   const today = dateStr(now);
   const data  = loadStreak();
-  if (now.getHours() < 12) return data; // before noon — not earned yet
-  if (data.lastDate === today) return data; // already recorded today
+  if (data.lastDate === today) return data; // already claimed
 
   const yesterday = dateStr(new Date(now.getTime() - 24 * 60 * 60 * 1000));
   const newStreak = data.lastDate === yesterday ? data.streak + 1 : 1;
@@ -478,18 +492,31 @@ function render() {
     </div>`;
 
   // Streak card
-  const sd = recordStreak();
+  const now2   = new Date();
+  const today2 = dateStr(now2);
+  const sd     = loadStreak();
+  const isPast12  = now2.getHours() >= 12;
+  const claimedToday = sd.lastDate === today2;
   const fireEmoji = sd.streak >= 30 ? '🔥🔥🔥' : sd.streak >= 7 ? '🔥🔥' : '🔥';
-  const streakSub = sd.streak === 0
-    ? 'Complete your fast today to start a streak'
-    : sd.streak === 1 ? 'First day — keep it going!'
-    : `${sd.streak} days in a row`;
+  const streakSub = claimedToday
+    ? `${sd.streak} day${sd.streak !== 1 ? 's' : ''} in a row — fasted!`
+    : sd.streak === 0 ? 'Tap below once you hit 12pm'
+    : `${sd.streak} day${sd.streak !== 1 ? 's' : ''} — keep it going!`;
+
+  let btnClass, btnText;
+  if (claimedToday)   { btnClass = 'done';  btnText = '✓ Fasted today'; }
+  else if (isPast12)  { btnClass = 'ready'; btnText = '🔥 I fasted today'; }
+  else                { btnClass = 'early'; btnText = `⏳ Window opens at 12:00 pm`; }
+
   html += `
     <div class="streak-card">
       <div class="streak-fire">${fireEmoji}</div>
       <div class="streak-info">
         <div class="streak-num">${sd.streak}<span>day streak</span></div>
         <div class="streak-sub">${streakSub}</div>
+        <button class="streak-btn ${btnClass}"
+          onclick="${claimedToday || !isPast12 ? '' : 'claimStreak();render();'}"
+        >${btnText}</button>
       </div>
       <div class="streak-best">best<br><strong>${sd.best}</strong></div>
     </div>`;
