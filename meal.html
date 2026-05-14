@@ -124,6 +124,54 @@
     .fasting-countdown { color: var(--yellow); font-size: 48px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
     .fasting-label    { color: var(--dim); font-size: 13px; }
 
+    /* ── Chicken progress bar ── */
+    .chicken-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+    }
+    .chicken-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--dim);
+      margin-bottom: 6px;
+    }
+    .chicken-bar-labels .active-label { color: var(--orange); font-weight: 600; }
+    .chicken-track {
+      position: relative;
+      height: 28px;
+      background: var(--border);
+      border-radius: 14px;
+      overflow: visible;
+    }
+    .chicken-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff6600, #FFAA00);
+      border-radius: 14px;
+      transition: width 1s ease;
+      min-width: 0;
+    }
+    .chicken-icon {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 22px;
+      transition: left 1s ease;
+      filter: drop-shadow(0 0 4px rgba(255,170,0,0.6));
+      z-index: 2;
+      line-height: 1;
+    }
+    .chicken-time {
+      text-align: center;
+      font-size: 12px;
+      color: var(--dim);
+      margin-top: 6px;
+    }
+    .chicken-time span { color: var(--yellow); font-weight: 600; }
+
     /* ── Footer ── */
     .footer {
       text-align: center;
@@ -383,6 +431,39 @@ function render() {
         <div class="day-cal">${day.cal}</div>
         <div class="day-fast">12 pm – 8 pm window</div>
       </div>
+    </div>`;
+
+  // Chicken progress bar — eating window 12pm (720) to 8pm (1200)
+  const WINDOW_START = 12 * 60;
+  const WINDOW_END   = 20 * 60;
+  const totalMins    = h * 60 + m;
+  const pct          = Math.min(100, Math.max(0, (totalMins - WINDOW_START) / (WINDOW_END - WINDOW_START) * 100));
+  const isFasting    = totalMins < WINDOW_START;
+  const isDone       = totalMins >= WINDOW_END;
+
+  let timeLabel;
+  if (isFasting) {
+    const rem = WINDOW_START - totalMins;
+    timeLabel = `window opens in <span>${Math.floor(rem/60)}h ${pad(rem%60)}m</span>`;
+  } else if (isDone) {
+    timeLabel = `fasting until <span>12:00 pm</span> — good work 🎉`;
+  } else {
+    const rem = WINDOW_END - totalMins;
+    timeLabel = `<span>${Math.floor(rem/60)}h ${pad(rem%60)}m</span> left in window`;
+  }
+
+  html += `
+    <div class="chicken-bar">
+      <div class="chicken-bar-labels">
+        <span class="${!isFasting && !isDone ? 'active-label' : ''}">12 pm</span>
+        <span>eating window</span>
+        <span class="${isDone ? 'active-label' : ''}">8 pm</span>
+      </div>
+      <div class="chicken-track">
+        <div class="chicken-fill" style="width:${pct}%"></div>
+        <div class="chicken-icon" style="left:${Math.max(4, Math.min(96, pct))}%">🐔</div>
+      </div>
+      <div class="chicken-time">${timeLabel}</div>
     </div>`;
 
   for (const { key, label, cls, icon } of MEAL_ORDER) {
