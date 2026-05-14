@@ -206,6 +206,21 @@
     }
     .chicken-time span { color: var(--yellow); font-weight: 600; }
 
+    /* ── Confetti ── */
+    .confetti-piece {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      top: -10px;
+      border-radius: 2px;
+      pointer-events: none;
+      animation: confetti-fall linear forwards;
+    }
+    @keyframes confetti-fall {
+      0%   { transform: translateY(0) rotate(0deg);   opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
     /* ── Footer ── */
     .footer {
       text-align: center;
@@ -468,6 +483,29 @@ function claimStreak() {
   return updated;
 }
 
+function confetti() {
+  const colors = ['#FFAA00','#00CCFF','#FF88CC','#88DD88','#FFE066','#55DDBB','#FF6666'];
+  for (let i = 0; i < 80; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left     = Math.random() * 100 + 'vw';
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.width    = (Math.random() * 8 + 6) + 'px';
+    el.style.height   = (Math.random() * 8 + 6) + 'px';
+    el.style.animationDuration  = (Math.random() * 2 + 1.5) + 's';
+    el.style.animationDelay     = (Math.random() * 0.5) + 's';
+    el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+
+function claimAndCelebrate() {
+  claimStreak();
+  confetti();
+  render();
+}
+
 function pad(n) { return String(n).padStart(2, '0'); }
 
 function fmt12(h, m) {
@@ -480,16 +518,6 @@ function render() {
   const h = now.getHours(), m = now.getMinutes();
   const day = DAYS[planIndex()];
   let html = '';
-
-  // Day header card
-  html += `
-    <div class="day-card">
-      <div class="day-num">TODAY'S PLAN</div>
-      <div class="day-meta">
-        <div class="day-cal">${day.cal}</div>
-        <div class="day-fast">12 pm – 8 pm window</div>
-      </div>
-    </div>`;
 
   // Streak card
   const now2   = new Date();
@@ -515,7 +543,7 @@ function render() {
         <div class="streak-num">${sd.streak}<span>day streak</span></div>
         <div class="streak-sub">${streakSub}</div>
         <button class="streak-btn ${btnClass}"
-          onclick="${claimedToday || !isPast12 ? '' : 'claimStreak();render();'}"
+          onclick="${claimedToday || !isPast12 ? '' : 'claimAndCelebrate()'}"
         >${btnText}</button>
       </div>
       <div class="streak-best">best<br><strong>${sd.best}</strong></div>
