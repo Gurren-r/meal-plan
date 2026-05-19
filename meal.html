@@ -582,28 +582,37 @@ function render() {
       <div class="chicken-time">${timeLabel}</div>
     </div>`;
 
-  for (const { key, label, cls, icon } of MEAL_ORDER) {
-    const meal = day.meals[key];
-      let items = '';
-      for (const [name, qty] of meal.items) {
-        items += `
-          <div class="food-item">
-            <span class="food-name">${name}</span>
-            ${qty ? `<span class="food-dots"></span><span class="food-qty">${qty}</span>` : ''}
-          </div>`;
-      }
-      html += `
-        <div class="meal-card ${cls}">
-          <div class="meal-header">
-            <span class="meal-icon">${icon}</span>
-            <div class="meal-info">
-              <div class="meal-label">${label}</div>
-              <div class="meal-time">${meal.time}</div>
+  const isTuesday = now.getDay() === 2;
+  if (isTuesday) {
+    html += `
+      <div class="fasting-card">
+        <div class="fasting-title">FREE DAY</div>
+        <div class="fasting-sub">Eat whatever you want today — enjoy it!</div>
+      </div>`;
+  } else {
+    for (const { key, label, cls, icon } of MEAL_ORDER) {
+      const meal = day.meals[key];
+        let items = '';
+        for (const [name, qty] of meal.items) {
+          items += `
+            <div class="food-item">
+              <span class="food-name">${name}</span>
+              ${qty ? `<span class="food-dots"></span><span class="food-qty">${qty}</span>` : ''}
+            </div>`;
+        }
+        html += `
+          <div class="meal-card ${cls}">
+            <div class="meal-header">
+              <span class="meal-icon">${icon}</span>
+              <div class="meal-info">
+                <div class="meal-label">${label}</div>
+                <div class="meal-time">${meal.time}</div>
+              </div>
+              <div class="meal-cal">${meal.cal}</div>
             </div>
-            <div class="meal-cal">${meal.cal}</div>
-          </div>
-          <div class="food-list">${items}</div>
-        </div>`;
+            <div class="food-list">${items}</div>
+          </div>`;
+    }
   }
 
   html += `<div class="footer">updated ${fmt12(h, m)}</div>`;
