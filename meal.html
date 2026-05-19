@@ -465,8 +465,8 @@ function dateStr(d) {
 }
 
 function loadStreak() {
-  try { return JSON.parse(localStorage.getItem('fastStreak')) || { streak: 0, best: 0, total: 0, lastDate: null }; }
-  catch { return { streak: 0, best: 0, total: 0, lastDate: null }; }
+  try { const d = JSON.parse(localStorage.getItem('fastStreak')); return d ? { total: 3, ...d } : { streak: 0, best: 0, total: 3, lastDate: null }; }
+  catch { return { streak: 0, best: 0, total: 3, lastDate: null }; }
 }
 
 function claimStreak() {
