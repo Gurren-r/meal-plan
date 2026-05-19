@@ -465,8 +465,8 @@ function dateStr(d) {
 }
 
 function loadStreak() {
-  try { return JSON.parse(localStorage.getItem('fastStreak')) || { streak: 0, best: 0, lastDate: null }; }
-  catch { return { streak: 0, best: 0, lastDate: null }; }
+  try { return JSON.parse(localStorage.getItem('fastStreak')) || { streak: 0, best: 0, total: 0, lastDate: null }; }
+  catch { return { streak: 0, best: 0, total: 0, lastDate: null }; }
 }
 
 function claimStreak() {
@@ -478,7 +478,8 @@ function claimStreak() {
   const yesterday = dateStr(new Date(now.getTime() - 24 * 60 * 60 * 1000));
   const newStreak = data.lastDate === yesterday ? data.streak + 1 : 1;
   const newBest   = Math.max(newStreak, data.best || 0);
-  const updated   = { streak: newStreak, best: newBest, lastDate: today };
+  const newTotal  = (data.total || 0) + 1;
+  const updated   = { streak: newStreak, best: newBest, total: newTotal, lastDate: today };
   localStorage.setItem('fastStreak', JSON.stringify(updated));
   return updated;
 }
@@ -546,7 +547,7 @@ function render() {
           onclick="${claimedToday || !isPast12 ? '' : 'claimAndCelebrate()'}"
         >${btnText}</button>
       </div>
-      <div class="streak-best">best<br><strong>${sd.best}</strong></div>
+      <div class="streak-best">best<br><strong>${sd.best}</strong><br><br>total<br><strong>${sd.total || 0}</strong></div>
     </div>`;
 
   // Chicken progress bar — eating window 12pm (720) to 8pm (1200)
