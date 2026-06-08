@@ -73,7 +73,7 @@
     .streak-btn.early  { background: var(--border); color: var(--dim); cursor: default; }
     .streak-btn:disabled { cursor: default; }
 
-    /* ── Chicken progress bar ── */
+    /* ── Chicken bar ── */
     .chicken-bar {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -113,319 +113,35 @@
       z-index: 2;
       line-height: 1;
     }
-    .chicken-time {
-      text-align: center;
-      font-size: 12px;
-      color: var(--dim);
-      margin-top: 6px;
-    }
+    .chicken-time { text-align: center; font-size: 12px; color: var(--dim); margin-top: 6px; }
     .chicken-time span { color: var(--yellow); font-weight: 600; }
 
-    /* ── Workout nav button ── */
-    .workout-nav {
+    /* ── Nav buttons ── */
+    .nav-btn {
       display: flex;
       align-items: center;
       justify-content: space-between;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-left: 3px solid var(--orange);
       border-radius: 12px;
-      padding: 13px 16px;
-      margin-bottom: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
       text-decoration: none;
       color: var(--text);
-      transition: border-color 0.2s, opacity 0.15s;
+      transition: opacity 0.15s;
     }
-    .workout-nav:active { opacity: 0.75; }
-    .workout-nav-left { display: flex; align-items: center; gap: 10px; }
-    .workout-nav-icon { font-size: 22px; line-height: 1; }
-    .workout-nav-label { font-size: 14px; font-weight: 700; color: var(--orange); }
-    .workout-nav-sub   { font-size: 11px; color: var(--dim); margin-top: 2px; }
-    .workout-nav-arrow { color: var(--dim); font-size: 18px; }
+    .nav-btn:active { opacity: 0.7; }
+    .nav-btn-left { display: flex; align-items: center; gap: 12px; }
+    .nav-btn-icon { font-size: 24px; line-height: 1; }
+    .nav-btn-label { font-size: 14px; font-weight: 700; }
+    .nav-btn-sub   { font-size: 11px; color: var(--dim); margin-top: 2px; }
+    .nav-btn-arrow { color: var(--dim); font-size: 18px; }
 
-    /* ── Weight entry card ── */
-    .weight-entry-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--cyan);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 10px;
-    }
-    .weight-entry-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .weight-entry-icon { font-size: 22px; }
-    .weight-entry-title { flex: 1; font-weight: 700; font-size: 14px; letter-spacing: 0.5px; color: var(--cyan); }
-    .weight-today-badge {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--orange);
-      background: rgba(255,170,0,0.1);
-      border: 1px solid rgba(255,170,0,0.3);
-      border-radius: 8px;
-      padding: 3px 9px;
-    }
-    .weight-input-row {
-      display: flex;
-      gap: 8px;
-    }
-    .weight-input-row input {
-      flex: 1;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 18px;
-      font-weight: 600;
-      padding: 10px 14px;
-      outline: none;
-      -moz-appearance: textfield;
-    }
-    .weight-input-row input::-webkit-outer-spin-button,
-    .weight-input-row input::-webkit-inner-spin-button { -webkit-appearance: none; }
-    .weight-input-row input:focus { border-color: var(--cyan); }
-    .weight-input-row input::placeholder { color: var(--dim); font-weight: 400; }
-    .weight-log-btn {
-      background: var(--cyan);
-      color: #111;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 10px 18px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      letter-spacing: 0.5px;
-    }
-    .weight-log-btn:active { transform: scale(0.96); }
-    .weight-logged-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .weight-logged-val {
-      font-size: 36px;
-      font-weight: 700;
-      color: var(--cyan);
-      line-height: 1;
-    }
-    .weight-logged-unit { font-size: 16px; color: var(--dim); margin-left: 4px; }
-    .weight-edit-btn {
-      background: var(--border);
-      color: var(--dim);
-      border: none;
-      border-radius: 8px;
-      font-size: 12px;
-      padding: 6px 12px;
-      cursor: pointer;
-    }
-    .weight-logged-date { font-size: 12px; color: var(--dim); margin-top: 4px; }
+    .nav-btn.workout { border-left: 3px solid var(--orange); }
+    .nav-btn.workout .nav-btn-label { color: var(--orange); }
 
-    /* ── Stats strip ── */
-    .weight-stats-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 16px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .stat-block { text-align: center; flex: 1; }
-    .stat-block + .stat-block { border-left: 1px solid var(--border); }
-    .stat-val { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; }
-    .stat-label { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.5px; }
-    .stat-val.positive { color: var(--green); }
-    .stat-val.negative { color: var(--red); }
-    .stat-val.neutral  { color: var(--dim); }
-
-    /* ── Chart card ── */
-    .weight-chart-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px 10px;
-      margin-bottom: 10px;
-    }
-    .chart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .chart-title { font-size: 12px; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.5px; }
-    .chart-range-btns { display: flex; gap: 4px; }
-    .chart-range-btn {
-      background: var(--border);
-      color: var(--dim);
-      border: none;
-      border-radius: 6px;
-      font-size: 11px;
-      padding: 3px 8px;
-      cursor: pointer;
-    }
-    .chart-range-btn.active { background: rgba(255,170,0,0.2); color: var(--orange); }
-    .weight-svg-wrap { width: 100%; }
-    .weight-svg-wrap svg { width: 100%; display: block; overflow: visible; }
-    .chart-empty {
-      text-align: center;
-      color: var(--dim);
-      font-size: 13px;
-      padding: 24px 0;
-    }
-    .chart-empty span { font-size: 28px; display: block; margin-bottom: 6px; }
-
-    /* ── Goal card ── */
-    .weight-goal-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 10px;
-    }
-    .goal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .goal-title { font-size: 13px; font-weight: 700; color: var(--yellow); letter-spacing: 0.5px; }
-    .goal-edit-btn {
-      background: none;
-      border: none;
-      color: var(--dim);
-      font-size: 12px;
-      cursor: pointer;
-      padding: 2px 6px;
-    }
-    .goal-set-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .goal-set-row input {
-      flex: 1;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 16px;
-      font-weight: 600;
-      padding: 8px 12px;
-      outline: none;
-      -moz-appearance: textfield;
-    }
-    .goal-set-row input::-webkit-outer-spin-button,
-    .goal-set-row input::-webkit-inner-spin-button { -webkit-appearance: none; }
-    .goal-set-row input:focus { border-color: var(--yellow); }
-    .goal-set-btn {
-      background: var(--yellow);
-      color: #111;
-      border: none;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 8px 14px;
-      cursor: pointer;
-    }
-    .goal-progress-wrap { margin-bottom: 8px; }
-    .goal-progress-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: var(--dim);
-      margin-bottom: 5px;
-    }
-    .goal-track {
-      height: 10px;
-      background: var(--border);
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    .goal-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--cyan), var(--yellow));
-      border-radius: 5px;
-      transition: width 0.8s ease;
-    }
-    .goal-stats-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--dim);
-      margin-top: 8px;
-    }
-    .goal-stats-row strong { color: var(--yellow); }
-    .goal-no-current {
-      font-size: 12px;
-      color: var(--dim);
-      text-align: center;
-      padding: 4px 0;
-    }
-
-    /* ── Milestones ── */
-    .milestones-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 12px;
-    }
-    .milestones-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--dim);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 10px;
-    }
-    .milestones-row {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .milestone-badge {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: var(--border);
-      border-radius: 10px;
-      padding: 8px 10px;
-      flex: 1;
-      min-width: 48px;
-      opacity: 0.35;
-      transition: opacity 0.3s, border 0.3s;
-      border: 1px solid transparent;
-    }
-    .milestone-badge.unlocked {
-      opacity: 1;
-      border-color: rgba(255,170,0,0.4);
-      background: rgba(255,170,0,0.08);
-    }
-    .milestone-badge.unlocked .ms-icon { filter: none; }
-    .ms-icon { font-size: 20px; line-height: 1; margin-bottom: 3px; filter: grayscale(1); }
-    .ms-label { font-size: 10px; color: var(--dim); font-weight: 600; }
-    .milestone-badge.unlocked .ms-label { color: var(--orange); }
-
-    /* ── Export button ── */
-    .export-btn {
-      display: block;
-      width: 100%;
-      margin-top: 8px;
-      padding: 8px;
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--dim);
-      font-size: 12px;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .export-btn:hover { border-color: var(--orange); color: var(--orange); }
+    .nav-btn.weight  { border-left: 3px solid var(--cyan); }
+    .nav-btn.weight  .nav-btn-label { color: var(--cyan); }
 
     /* ── Confetti ── */
     .confetti-piece {
@@ -443,18 +159,12 @@
     }
 
     /* ── Footer ── */
-    .footer {
-      text-align: center;
-      color: var(--border);
-      font-size: 11px;
-      margin-top: 8px;
-      padding-bottom: 8px;
-    }
+    .footer { text-align: center; color: var(--border); font-size: 11px; margin-top: 8px; padding-bottom: 8px; }
   </style>
 </head>
 <body>
 <script>
-// ── Utilities ──────────────────────────────────────────────
+// ── Utilities ─────────────────────────────────────────────
 function pad(n) { return String(n).padStart(2, '0'); }
 function fmt12(h, m) {
   const ampm = h < 12 ? 'am' : 'pm';
@@ -463,12 +173,8 @@ function fmt12(h, m) {
 function dateStr(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-function fmtDateShort(str) {
-  const [, m, d] = str.split('-');
-  return `${parseInt(m)}/${parseInt(d)}`;
-}
 
-// ── Fasting streak ─────────────────────────────────────────
+// ── Fasting streak ────────────────────────────────────────
 function loadStreak() {
   try { const d = JSON.parse(localStorage.getItem('fastStreak')); return d ? { total: 0, ...d } : { streak: 0, best: 0, total: 0, lastDate: null }; }
   catch { return { streak: 0, best: 0, total: 0, lastDate: null }; }
@@ -484,63 +190,7 @@ function claimStreak() {
   return updated;
 }
 
-// ── Weight log ─────────────────────────────────────────────
-function loadWeightLog() {
-  try { return JSON.parse(localStorage.getItem('weightLog')) || []; }
-  catch { return []; }
-}
-function saveWeightEntry(lbs) {
-  const log = loadWeightLog();
-  const today = dateStr(new Date());
-  const idx = log.findIndex(e => e.date === today);
-  if (idx >= 0) log[idx].weight = lbs;
-  else log.push({ date: today, weight: lbs });
-  log.sort((a, b) => a.date.localeCompare(b.date));
-  localStorage.setItem('weightLog', JSON.stringify(log));
-}
-function loadGoal() {
-  const g = parseFloat(localStorage.getItem('weightGoal'));
-  return isNaN(g) ? null : g;
-}
-function saveGoal(g) { localStorage.setItem('weightGoal', String(g)); }
-
-// ── Milestones ─────────────────────────────────────────────
-const MS_ICONS = ['🌱', '💪', '🔥', '⚡', '🏆', '👑'];
-
-function getMilestones(start, goal) {
-  const total = start && goal ? start - goal : 0;
-  if (total <= 0) return [
-    { lbs: 5,  icon: MS_ICONS[0], label: '-5 lbs'  },
-    { lbs: 10, icon: MS_ICONS[1], label: '-10 lbs' },
-    { lbs: 15, icon: MS_ICONS[2], label: '-15 lbs' },
-    { lbs: 20, icon: MS_ICONS[3], label: '-20 lbs' },
-    { lbs: 25, icon: MS_ICONS[4], label: '-25 lbs' },
-    { lbs: 30, icon: MS_ICONS[5], label: '-30 lbs' },
-  ];
-  const interval = total / MS_ICONS.length;
-  const snap = total >= 60 ? 5 : total >= 24 ? 2 : 1;
-  const milestones = [];
-  for (let i = 0; i < MS_ICONS.length; i++) {
-    const raw = i === MS_ICONS.length - 1 ? total : Math.round((interval * (i + 1)) / snap) * snap;
-    const lbs = Math.max(raw, milestones.length ? milestones[milestones.length - 1].lbs + 1 : 1);
-    milestones.push({ lbs: Math.round(lbs), icon: MS_ICONS[i], label: `-${Math.round(lbs)} lbs` });
-  }
-  return milestones;
-}
-
-function checkNewMilestones(log, milestones) {
-  if (log.length < 2) return false;
-  const lost = log[0].weight - log[log.length - 1].weight;
-  const nowReached = milestones.filter(m => lost >= m.lbs).length;
-  const prevReached = parseInt(localStorage.getItem('milestonesReached') || '0');
-  if (nowReached > prevReached) {
-    localStorage.setItem('milestonesReached', String(nowReached));
-    return true;
-  }
-  return false;
-}
-
-// ── Confetti ───────────────────────────────────────────────
+// ── Confetti ──────────────────────────────────────────────
 function confetti(count = 80) {
   const colors = ['#FFAA00','#00CCFF','#FF88CC','#88DD88','#FFE066','#55DDBB','#FF6666'];
   for (let i = 0; i < count; i++) {
@@ -559,319 +209,7 @@ function confetti(count = 80) {
 }
 function claimAndCelebrate() { claimStreak(); confetti(); renderStreakCard(); }
 
-// ── Weight actions (called from HTML) ─────────────────────
-let chartRange = 30;
-function setRange(r) { chartRange = r; renderWeightSection(); }
-
-function logWeight() {
-  const inp = document.getElementById('weightInput');
-  const val = parseFloat(inp.value);
-  if (isNaN(val) || val < 50 || val > 700) return;
-  saveWeightEntry(val);
-  const log = loadWeightLog();
-  const milestones = getMilestones(log.length ? log[0].weight : null, loadGoal());
-  if (checkNewMilestones(log, milestones)) confetti(120);
-  renderWeightSection();
-}
-
-function editWeight() {
-  const log = loadWeightLog();
-  const today = dateStr(new Date());
-  const entry = log.find(e => e.date === today);
-  renderWeightSection(true, entry ? entry.weight : null);
-}
-
-function saveGoalInput() {
-  const inp = document.getElementById('goalInput');
-  const val = parseFloat(inp.value);
-  if (isNaN(val) || val < 50 || val > 700) return;
-  saveGoal(val);
-  renderWeightSection();
-}
-
-function clearGoal() {
-  localStorage.removeItem('weightGoal');
-  renderWeightSection();
-}
-
-// ── Export ─────────────────────────────────────────────────
-function exportData() {
-  const data = { weightLog: loadWeightLog(), streak: loadStreak(), goal: loadGoal() };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `weight-log-${dateStr(new Date())}.json`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-// ── SVG Chart ──────────────────────────────────────────────
-function smoothPath(pts) {
-  if (pts.length < 2) return '';
-  let d = `M ${pts[0][0]},${pts[0][1]}`;
-  for (let i = 1; i < pts.length; i++) {
-    const cp = (pts[i-1][0] + pts[i][0]) / 2;
-    d += ` C ${cp},${pts[i-1][1]} ${cp},${pts[i][1]} ${pts[i][0]},${pts[i][1]}`;
-  }
-  return d;
-}
-
-function buildChart(log) {
-  const entries = log.slice(-chartRange);
-  if (entries.length < 2) {
-    return `<div class="chart-empty"><span>📉</span>Log at least 2 days to see your chart</div>`;
-  }
-
-  const W = 300, H = 110;
-  const PAD = { top: 14, right: 14, bottom: 22, left: 38 };
-  const cW = W - PAD.left - PAD.right;
-  const cH = H - PAD.top - PAD.bottom;
-
-  const weights = entries.map(e => e.weight);
-  const minW = Math.min(...weights), maxW = Math.max(...weights);
-  const range = maxW - minW || 1;
-  const padded = range * 0.15;
-
-  const xS = i => PAD.left + (i / (entries.length - 1)) * cW;
-  const yS = w => PAD.top + cH - ((w - (minW - padded)) / (range + padded * 2)) * cH;
-
-  const pts = entries.map((e, i) => [xS(i), yS(e.weight)]);
-  const line = smoothPath(pts);
-  const area = `M ${pts[0][0]},${H - PAD.bottom} L ` + pts.map(p => `${p[0]},${p[1]}`).join(' L ') + ` L ${pts[pts.length-1][0]},${H - PAD.bottom} Z`;
-
-  const today = dateStr(new Date());
-  const todayIdx = entries.findIndex(e => e.date === today);
-
-  const yLabels = [minW, (minW + maxW) / 2, maxW].map(w => ({
-    y: yS(w),
-    label: w.toFixed(1)
-  }));
-
-  const gridLines = yLabels.map(l =>
-    `<line x1="${PAD.left}" y1="${l.y}" x2="${W - PAD.right}" y2="${l.y}" stroke="#2a2a2a" stroke-width="1" stroke-dasharray="3,3"/>`
-  ).join('');
-
-  const yAxisLabels = yLabels.map(l =>
-    `<text x="${PAD.left - 4}" y="${l.y + 3.5}" font-size="8" fill="#444" text-anchor="end">${l.label}</text>`
-  ).join('');
-
-  const xLabels = [
-    `<text x="${pts[0][0]}" y="${H - 4}" font-size="8" fill="#444" text-anchor="middle">${fmtDateShort(entries[0].date)}</text>`,
-    `<text x="${pts[pts.length-1][0]}" y="${H - 4}" font-size="8" fill="#444" text-anchor="middle">${fmtDateShort(entries[entries.length-1].date)}</text>`,
-  ].join('');
-
-  const dots = entries.map((e, i) => {
-    const isToday = i === todayIdx;
-    const isLast  = i === entries.length - 1;
-    const r = isToday || isLast ? 4 : 2.5;
-    const fill = isToday ? '#00CCFF' : isLast ? '#FFAA00' : '#1a1a1a';
-    const stroke = isToday ? '#00CCFF' : '#FFAA00';
-    const tip = isToday || isLast
-      ? `<text x="${pts[i][0]}" y="${pts[i][1] - 8}" font-size="9" fill="${stroke}" text-anchor="middle" font-weight="700">${e.weight}</text>`
-      : '';
-    return `${tip}<circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>`;
-  }).join('');
-
-  const first = entries[0].weight, last = entries[entries.length-1].weight;
-  const diff = last - first;
-  const trendColor = diff < 0 ? '#88DD88' : diff > 0 ? '#FF6666' : '#555';
-  const trendArrow = diff < 0 ? '▼' : diff > 0 ? '▲' : '—';
-  const trendText = `${trendArrow} ${Math.abs(diff).toFixed(1)} lbs`;
-
-  return `
-    <div class="weight-svg-wrap">
-      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#FFAA00" stop-opacity="0.25"/>
-            <stop offset="100%" stop-color="#FFAA00" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-        ${gridLines}
-        ${yAxisLabels}
-        ${xLabels}
-        <path d="${area}" fill="url(#areaGrad)"/>
-        <path d="${line}" fill="none" stroke="#FFAA00" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-        ${dots}
-        <text x="${W - PAD.right}" y="${PAD.top + 2}" font-size="9" fill="${trendColor}" text-anchor="end" font-weight="700">${trendText}</text>
-      </svg>
-    </div>`;
-}
-
-// ── Weight section renderer ────────────────────────────────
-function renderWeightSection(forceEdit = false, editPrefill = null) {
-  const log     = loadWeightLog();
-  const goal    = loadGoal();
-  const today   = dateStr(new Date());
-  const todayEntry = log.find(e => e.date === today);
-  const hasData = log.length > 0;
-  const current = hasData ? log[log.length - 1].weight : null;
-  const start   = hasData ? log[0].weight : null;
-  const milestones = getMilestones(start, goal);
-  const totalChange = hasData && log.length > 1 ? current - start : null;
-
-  let trend7 = null;
-  if (log.length >= 2) {
-    const recent = log.slice(-7);
-    const older  = log.length >= 14 ? log.slice(-14, -7) : null;
-    if (older && older.length > 0) {
-      const avgRecent = recent.reduce((s, e) => s + e.weight, 0) / recent.length;
-      const avgOlder  = older.reduce((s, e) => s + e.weight, 0) / older.length;
-      trend7 = avgRecent - avgOlder;
-    }
-  }
-
-  // Entry card HTML
-  let entryHTML;
-  if (!todayEntry || forceEdit) {
-    const pre = editPrefill != null ? editPrefill : (todayEntry ? todayEntry.weight : '');
-    entryHTML = `
-      <div class="weight-entry-header">
-        <span class="weight-entry-icon">⚖️</span>
-        <div class="weight-entry-title">TODAY'S WEIGHT</div>
-        ${todayEntry ? `<div class="weight-today-badge">${todayEntry.weight} lbs</div>` : ''}
-      </div>
-      <div class="weight-input-row">
-        <input type="number" id="weightInput" placeholder="185.0" step="0.1" min="50" max="700" value="${pre}" inputmode="decimal">
-        <button class="weight-log-btn" onclick="logWeight()">LOG</button>
-      </div>`;
-  } else {
-    const changeFromPrev = log.length >= 2
-      ? todayEntry.weight - log[log.length - 2].weight
-      : null;
-    const changeStr = changeFromPrev !== null
-      ? (changeFromPrev < 0
-          ? `<span style="color:var(--green)">▼ ${Math.abs(changeFromPrev).toFixed(1)} lbs</span>`
-          : changeFromPrev > 0
-            ? `<span style="color:var(--red)">▲ ${Math.abs(changeFromPrev).toFixed(1)} lbs</span>`
-            : `<span style="color:var(--dim)">— no change</span>`)
-      : '';
-    entryHTML = `
-      <div class="weight-entry-header">
-        <span class="weight-entry-icon">⚖️</span>
-        <div class="weight-entry-title">TODAY'S WEIGHT</div>
-      </div>
-      <div class="weight-logged-row">
-        <div>
-          <div class="weight-logged-val">${todayEntry.weight}<span class="weight-logged-unit">lbs</span></div>
-          <div class="weight-logged-date">${changeStr}</div>
-        </div>
-        <button class="weight-edit-btn" onclick="editWeight()">✏️ edit</button>
-      </div>`;
-  }
-
-  // Stats HTML
-  const fmtChange = v => {
-    if (v === null) return { val: '--', cls: 'neutral' };
-    const sign = v < 0 ? '▼ ' : v > 0 ? '▲ ' : '';
-    return { val: `${sign}${Math.abs(v).toFixed(1)}`, cls: v < 0 ? 'positive' : v > 0 ? 'negative' : 'neutral' };
-  };
-  const chg = fmtChange(totalChange);
-  const t7  = fmtChange(trend7);
-  const statsHTML = `
-    <div class="stat-block">
-      <div class="stat-val">${start ? start.toFixed(1) : '--'}</div>
-      <div class="stat-label">start</div>
-    </div>
-    <div class="stat-block">
-      <div class="stat-val">${current ? current.toFixed(1) : '--'}</div>
-      <div class="stat-label">current</div>
-    </div>
-    <div class="stat-block">
-      <div class="stat-val ${chg.cls}">${chg.val}</div>
-      <div class="stat-label">total</div>
-    </div>
-    <div class="stat-block">
-      <div class="stat-val ${t7.cls}">${t7.val}</div>
-      <div class="stat-label">7-day avg</div>
-    </div>`;
-
-  // Chart HTML
-  const chartBtns = [14, 30, 90].map(r =>
-    `<button class="chart-range-btn${chartRange === r ? ' active' : ''}" onclick="setRange(${r})">${r}d</button>`
-  ).join('');
-  const chartContent = buildChart(log);
-
-  // Goal HTML
-  let goalHTML;
-  if (goal === null) {
-    goalHTML = `
-      <div class="goal-header"><div class="goal-title">🎯 SET GOAL WEIGHT</div></div>
-      <div class="goal-set-row">
-        <input type="number" id="goalInput" placeholder="165.0" step="0.1" min="50" max="700" inputmode="decimal">
-        <button class="goal-set-btn" onclick="saveGoalInput()">SET</button>
-      </div>`;
-  } else if (!current) {
-    goalHTML = `
-      <div class="goal-header">
-        <div class="goal-title">🎯 GOAL: ${goal} lbs</div>
-        <button class="goal-edit-btn" onclick="clearGoal()">✏️</button>
-      </div>
-      <div class="goal-no-current">Log your first weight to see progress</div>`;
-  } else {
-    const totalNeeded = Math.abs(start - goal);
-    const totalDone   = Math.abs(current - goal) < Math.abs(start - goal) ? Math.abs(start - current) : 0;
-    const pct = totalNeeded > 0 ? Math.min(100, Math.max(0, (totalDone / totalNeeded) * 100)) : 100;
-    const toGo = (current - goal).toFixed(1);
-    const toGoStr = parseFloat(toGo) <= 0
-      ? `<strong style="color:var(--green)">🎉 Goal reached!</strong>`
-      : `<strong>${Math.abs(toGo)} lbs</strong> to go`;
-    goalHTML = `
-      <div class="goal-header">
-        <div class="goal-title">🎯 GOAL: ${goal} lbs</div>
-        <button class="goal-edit-btn" onclick="clearGoal()">✏️</button>
-      </div>
-      <div class="goal-progress-wrap">
-        <div class="goal-progress-labels">
-          <span>${start ? start.toFixed(1) : '--'}</span>
-          <span>${toGoStr}</span>
-          <span>${goal}</span>
-        </div>
-        <div class="goal-track"><div class="goal-fill" style="width:${pct.toFixed(1)}%"></div></div>
-      </div>
-      <div class="goal-stats-row">
-        <span>${pct.toFixed(0)}% of the way there</span>
-        <span>current: <strong>${current.toFixed(1)}</strong></span>
-      </div>`;
-  }
-
-  // Milestones HTML
-  const lost = start && current ? start - current : 0;
-  const msHTML = milestones.map(m => {
-    const unlocked = lost >= m.lbs;
-    return `
-      <div class="milestone-badge${unlocked ? ' unlocked' : ''}">
-        <div class="ms-icon">${m.icon}</div>
-        <div class="ms-label">${m.label}</div>
-      </div>`;
-  }).join('');
-
-  const section = document.getElementById('weightSection');
-  if (!section) return;
-  section.innerHTML = `
-    <div class="weight-entry-card">${entryHTML}</div>
-    <div class="weight-stats-card">${statsHTML}</div>
-    <div class="weight-chart-card">
-      <div class="chart-header">
-        <div class="chart-title">Weight History</div>
-        <div class="chart-range-btns">${chartBtns}</div>
-      </div>
-      ${chartContent}
-    </div>
-    <div class="weight-goal-card">${goalHTML}</div>
-    <div class="milestones-card">
-      <div class="milestones-title">Milestones</div>
-      <div class="milestones-row">${msHTML}</div>
-    </div>
-    <button class="export-btn" onclick="exportData()">⬇ export data</button>`;
-
-  if (!todayEntry || forceEdit) {
-    const inp = document.getElementById('weightInput');
-    if (inp && forceEdit) inp.focus();
-  }
-}
-
-// ── Streak card renderer ───────────────────────────────────
+// ── Streak card ───────────────────────────────────────────
 function renderStreakCard() {
   const now = new Date();
   const today = dateStr(now);
@@ -885,9 +223,9 @@ function renderStreakCard() {
     : `${sd.streak} day${sd.streak !== 1 ? 's' : ''} — keep it going!`;
 
   let btnClass, btnText, btnAttrs;
-  if (claimedToday)  { btnClass = 'done';  btnText = '✓ Fasted today';           btnAttrs = 'disabled'; }
-  else if (isPast12) { btnClass = 'ready'; btnText = '🔥 I fasted today';         btnAttrs = 'onclick="claimAndCelebrate()"'; }
-  else               { btnClass = 'early'; btnText = '⏳ Window opens at 12:00 pm'; btnAttrs = 'disabled'; }
+  if (claimedToday)  { btnClass = 'done';  btnText = '✓ Fasted today';              btnAttrs = 'disabled'; }
+  else if (isPast12) { btnClass = 'ready'; btnText = '🔥 I fasted today';            btnAttrs = 'onclick="claimAndCelebrate()"'; }
+  else               { btnClass = 'early'; btnText = '⏳ Window opens at 12:00 pm';  btnAttrs = 'disabled'; }
 
   document.getElementById('streakCard').innerHTML = `
     <div class="streak-fire">${fireEmoji}</div>
@@ -899,7 +237,7 @@ function renderStreakCard() {
     <div class="streak-best">best<br><strong>${sd.best}</strong><br><br>total<br><strong>${sd.total}</strong></div>`;
 }
 
-// ── Chicken bar renderer ───────────────────────────────────
+// ── Chicken bar ───────────────────────────────────────────
 function renderChickenBar() {
   const now = new Date();
   const h = now.getHours(), m = now.getMinutes();
@@ -933,7 +271,7 @@ function renderChickenBar() {
     <div class="chicken-time">${timeLabel}</div>`;
 }
 
-// ── Tick ───────────────────────────────────────────────────
+// ── Tick ──────────────────────────────────────────────────
 function tick() {
   renderStreakCard();
   renderChickenBar();
@@ -941,27 +279,33 @@ function tick() {
   document.getElementById('footer').textContent = `updated ${fmt12(now.getHours(), now.getMinutes())}`;
 }
 
-// ── Init ───────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────
 function init() {
   document.body.innerHTML = `
     <div class="streak-card" id="streakCard"></div>
     <div class="chicken-bar" id="chickenBar"></div>
-    <a class="workout-nav" href="workout.html">
-      <div class="workout-nav-left">
-        <span class="workout-nav-icon">&#128170;</span>
+    <a class="nav-btn workout" href="workout.html">
+      <div class="nav-btn-left">
+        <span class="nav-btn-icon">&#128170;</span>
         <div>
-          <div class="workout-nav-label">Workout Schedule</div>
-          <div class="workout-nav-sub">Bodyweight &mdash; check off today's session</div>
+          <div class="nav-btn-label">Workout Schedule</div>
+          <div class="nav-btn-sub">Bodyweight &mdash; check off today's session</div>
         </div>
       </div>
-      <span class="workout-nav-arrow">&#8594;</span>
+      <span class="nav-btn-arrow">&#8594;</span>
     </a>
-    <div id="weightSection"></div>
+    <a class="nav-btn weight" href="weight.html">
+      <div class="nav-btn-left">
+        <span class="nav-btn-icon">&#9878;&#65039;</span>
+        <div>
+          <div class="nav-btn-label">Weight Tracker</div>
+          <div class="nav-btn-sub">Log weight, track progress &amp; milestones</div>
+        </div>
+      </div>
+      <span class="nav-btn-arrow">&#8594;</span>
+    </a>
     <div class="footer" id="footer"></div>`;
 
-  renderStreakCard();
-  renderChickenBar();
-  renderWeightSection();
   tick();
 }
 
