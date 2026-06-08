@@ -71,6 +71,7 @@
     .streak-btn.ready  { background: var(--orange); color: #111; }
     .streak-btn.done   { background: var(--border); color: var(--dim); cursor: default; }
     .streak-btn.early  { background: var(--border); color: var(--dim); cursor: default; }
+    .streak-btn:disabled { cursor: default; }
 
     /* ── Chicken progress bar ── */
     .chicken-bar {
@@ -388,6 +389,22 @@
     .ms-label { font-size: 10px; color: var(--dim); font-weight: 600; }
     .milestone-badge.unlocked .ms-label { color: var(--orange); }
 
+    /* ── Export button ── */
+    .export-btn {
+      display: block;
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--dim);
+      font-size: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .export-btn:hover { border-color: var(--orange); color: var(--orange); }
+
     /* ── Confetti ── */
     .confetti-piece {
       position: fixed;
@@ -431,13 +448,14 @@ function fmtDateShort(str) {
 
 // ── Fasting streak ─────────────────────────────────────────
 function loadStreak() {
-  try { const d = JSON.parse(localStorage.getItem('fastStreak')); return d ? { total: 3, ...d } : { streak: 0, best: 0, total: 3, lastDate: null }; }
-  catch { return { streak: 0, best: 0, total: 3, lastDate: null }; }
+  try { const d = JSON.parse(localStorage.getItem('fastStreak')); return d ? { total: 0, ...d } : { streak: 0, best: 0, total: 0, lastDate: null }; }
+  catch { return { streak: 0, best: 0, total: 0, lastDate: null }; }
 }
 function claimStreak() {
   const now = new Date(), today = dateStr(now), data = loadStreak();
   if (data.lastDate === today) return data;
-  const yesterday = dateStr(new Date(now.getTime() - 86400000));
+  const y = new Date(now); y.setDate(y.getDate() - 1);
+  const yesterday = dateStr(y);
   const newStreak = data.lastDate === yesterday ? data.streak + 1 : 1;
   const updated = { streak: newStreak, best: Math.max(newStreak, data.best || 0), total: (data.total || 0) + 1, lastDate: today };
   localStorage.setItem('fastStreak', JSON.stringify(updated));
@@ -468,25 +486,22 @@ function saveGoal(g) { localStorage.setItem('weightGoal', String(g)); }
 const MS_ICONS = ['🌱', '💪', '🔥', '⚡', '🏆', '👑'];
 
 function getMilestones(start, goal) {
-  const ICONS = MS_ICONS;
-  // If no goal set or goal >= start (gaining), use fixed defaults
   const total = start && goal ? start - goal : 0;
   if (total <= 0) return [
-    { lbs: 5,  icon: ICONS[0], label: '-5 lbs'  },
-    { lbs: 10, icon: ICONS[1], label: '-10 lbs' },
-    { lbs: 15, icon: ICONS[2], label: '-15 lbs' },
-    { lbs: 20, icon: ICONS[3], label: '-20 lbs' },
-    { lbs: 25, icon: ICONS[4], label: '-25 lbs' },
-    { lbs: 30, icon: ICONS[5], label: '-30 lbs' },
+    { lbs: 5,  icon: MS_ICONS[0], label: '-5 lbs'  },
+    { lbs: 10, icon: MS_ICONS[1], label: '-10 lbs' },
+    { lbs: 15, icon: MS_ICONS[2], label: '-15 lbs' },
+    { lbs: 20, icon: MS_ICONS[3], label: '-20 lbs' },
+    { lbs: 25, icon: MS_ICONS[4], label: '-25 lbs' },
+    { lbs: 30, icon: MS_ICONS[5], label: '-30 lbs' },
   ];
-  // Round interval to a clean number based on total range
-  const interval = total / ICONS.length;
+  const interval = total / MS_ICONS.length;
   const snap = total >= 60 ? 5 : total >= 24 ? 2 : 1;
   const milestones = [];
-  for (let i = 0; i < ICONS.length; i++) {
-    const raw = i === ICONS.length - 1 ? total : Math.round((interval * (i + 1)) / snap) * snap;
+  for (let i = 0; i < MS_ICONS.length; i++) {
+    const raw = i === MS_ICONS.length - 1 ? total : Math.round((interval * (i + 1)) / snap) * snap;
     const lbs = Math.max(raw, milestones.length ? milestones[milestones.length - 1].lbs + 1 : 1);
-    milestones.push({ lbs: Math.round(lbs), icon: ICONS[i], label: `-${Math.round(lbs)} lbs` });
+    milestones.push({ lbs: Math.round(lbs), icon: MS_ICONS[i], label: `-${Math.round(lbs)} lbs` });
   }
   return milestones;
 }
@@ -520,7 +535,7 @@ function confetti(count = 80) {
     el.addEventListener('animationend', () => el.remove());
   }
 }
-function claimAndCelebrate() { claimStreak(); confetti(); render(); }
+function claimAndCelebrate() { claimStreak(); confetti(); renderStreakCard(); }
 
 // ── Weight actions (called from HTML) ─────────────────────
 let chartRange = 30;
@@ -550,6 +565,22 @@ function saveGoalInput() {
   if (isNaN(val) || val < 50 || val > 700) return;
   saveGoal(val);
   renderWeightSection();
+}
+
+function clearGoal() {
+  localStorage.removeItem('weightGoal');
+  renderWeightSection();
+}
+
+// ── Export ─────────────────────────────────────────────────
+function exportData() {
+  const data = { weightLog: loadWeightLog(), streak: loadStreak(), goal: loadGoal() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `weight-log-${dateStr(new Date())}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 // ── SVG Chart ──────────────────────────────────────────────
@@ -589,13 +620,11 @@ function buildChart(log) {
   const today = dateStr(new Date());
   const todayIdx = entries.findIndex(e => e.date === today);
 
-  // Y-axis labels (3 levels)
   const yLabels = [minW, (minW + maxW) / 2, maxW].map(w => ({
     y: yS(w),
     label: w.toFixed(1)
   }));
 
-  // Grid lines
   const gridLines = yLabels.map(l =>
     `<line x1="${PAD.left}" y1="${l.y}" x2="${W - PAD.right}" y2="${l.y}" stroke="#2a2a2a" stroke-width="1" stroke-dasharray="3,3"/>`
   ).join('');
@@ -604,13 +633,11 @@ function buildChart(log) {
     `<text x="${PAD.left - 4}" y="${l.y + 3.5}" font-size="8" fill="#444" text-anchor="end">${l.label}</text>`
   ).join('');
 
-  // X-axis date labels (first and last)
   const xLabels = [
     `<text x="${pts[0][0]}" y="${H - 4}" font-size="8" fill="#444" text-anchor="middle">${fmtDateShort(entries[0].date)}</text>`,
     `<text x="${pts[pts.length-1][0]}" y="${H - 4}" font-size="8" fill="#444" text-anchor="middle">${fmtDateShort(entries[entries.length-1].date)}</text>`,
   ].join('');
 
-  // Dots
   const dots = entries.map((e, i) => {
     const isToday = i === todayIdx;
     const isLast  = i === entries.length - 1;
@@ -623,7 +650,6 @@ function buildChart(log) {
     return `${tip}<circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>`;
   }).join('');
 
-  // Trend arrow in top-right
   const first = entries[0].weight, last = entries[entries.length-1].weight;
   const diff = last - first;
   const trendColor = diff < 0 ? '#88DD88' : diff > 0 ? '#FF6666' : '#555';
@@ -656,12 +682,10 @@ function renderWeightSection(forceEdit = false, editPrefill = null) {
   const goal    = loadGoal();
   const today   = dateStr(new Date());
   const todayEntry = log.find(e => e.date === today);
-  // Stats
   const hasData = log.length > 0;
   const current = hasData ? log[log.length - 1].weight : null;
   const start   = hasData ? log[0].weight : null;
   const milestones = getMilestones(start, goal);
-  const milestonesReached = parseInt(localStorage.getItem('milestonesReached') || '0');
   const totalChange = hasData && log.length > 1 ? current - start : null;
 
   let trend7 = null;
@@ -720,8 +744,8 @@ function renderWeightSection(forceEdit = false, editPrefill = null) {
     const sign = v < 0 ? '▼ ' : v > 0 ? '▲ ' : '';
     return { val: `${sign}${Math.abs(v).toFixed(1)}`, cls: v < 0 ? 'positive' : v > 0 ? 'negative' : 'neutral' };
   };
-  const chg  = fmtChange(totalChange);
-  const t7   = fmtChange(trend7);
+  const chg = fmtChange(totalChange);
+  const t7  = fmtChange(trend7);
   const statsHTML = `
     <div class="stat-block">
       <div class="stat-val">${start ? start.toFixed(1) : '--'}</div>
@@ -789,10 +813,10 @@ function renderWeightSection(forceEdit = false, editPrefill = null) {
       </div>`;
   }
 
-  // Milestones HTML
+  // Milestones HTML — unlocked based on actual lbs lost, not stored count
   const lost = start && current ? start - current : 0;
-  const msHTML = milestones.map((m, i) => {
-    const unlocked = i < milestonesReached;
+  const msHTML = milestones.map(m => {
+    const unlocked = lost >= m.lbs;
     return `
       <div class="milestone-badge${unlocked ? ' unlocked' : ''}">
         <div class="ms-icon">${m.icon}</div>
@@ -816,44 +840,47 @@ function renderWeightSection(forceEdit = false, editPrefill = null) {
     <div class="milestones-card">
       <div class="milestones-title">Milestones</div>
       <div class="milestones-row">${msHTML}</div>
-    </div>`;
+    </div>
+    <button class="export-btn" onclick="exportData()">⬇ export data</button>`;
 
-  // Autofocus input if editing
   if (!todayEntry || forceEdit) {
     const inp = document.getElementById('weightInput');
     if (inp && forceEdit) inp.focus();
   }
 }
 
-function clearGoal() {
-  localStorage.removeItem('weightGoal');
-  renderWeightSection();
-}
-
-// ── Main render ────────────────────────────────────────────
-function render() {
-  if (document.activeElement && (
-    document.activeElement.id === 'weightInput' ||
-    document.activeElement.id === 'goalInput'
-  )) return;
-
+// ── Streak card renderer ───────────────────────────────────
+function renderStreakCard() {
   const now = new Date();
-  const h = now.getHours(), m = now.getMinutes();
-  const today2 = dateStr(now);
+  const today = dateStr(now);
   const sd = loadStreak();
-  const isPast12 = h >= 12;
-  const claimedToday = sd.lastDate === today2;
+  const isPast12 = now.getHours() >= 12;
+  const claimedToday = sd.lastDate === today;
   const fireEmoji = sd.streak >= 30 ? '🔥🔥🔥' : sd.streak >= 7 ? '🔥🔥' : '🔥';
   const streakSub = claimedToday
     ? `${sd.streak} day${sd.streak !== 1 ? 's' : ''} in a row — fasted!`
     : sd.streak === 0 ? 'Tap below once you hit 12pm'
     : `${sd.streak} day${sd.streak !== 1 ? 's' : ''} — keep it going!`;
 
-  let btnClass, btnText;
-  if (claimedToday)  { btnClass = 'done';  btnText = '✓ Fasted today'; }
-  else if (isPast12) { btnClass = 'ready'; btnText = '🔥 I fasted today'; }
-  else               { btnClass = 'early'; btnText = `⏳ Window opens at 12:00 pm`; }
+  let btnClass, btnText, btnAttrs;
+  if (claimedToday)  { btnClass = 'done';  btnText = '✓ Fasted today';           btnAttrs = 'disabled'; }
+  else if (isPast12) { btnClass = 'ready'; btnText = '🔥 I fasted today';         btnAttrs = 'onclick="claimAndCelebrate()"'; }
+  else               { btnClass = 'early'; btnText = '⏳ Window opens at 12:00 pm'; btnAttrs = 'disabled'; }
 
+  document.getElementById('streakCard').innerHTML = `
+    <div class="streak-fire">${fireEmoji}</div>
+    <div class="streak-info">
+      <div class="streak-num">${sd.streak}<span>day streak</span></div>
+      <div class="streak-sub">${streakSub}</div>
+      <button class="streak-btn ${btnClass}" ${btnAttrs}>${btnText}</button>
+    </div>
+    <div class="streak-best">best<br><strong>${sd.best}</strong><br><br>total<br><strong>${sd.total}</strong></div>`;
+}
+
+// ── Chicken bar renderer ───────────────────────────────────
+function renderChickenBar() {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes();
   const WINDOW_START = 12 * 60, WINDOW_END = 20 * 60;
   const totalMins = h * 60 + m;
   const pct = Math.min(100, Math.max(0, (totalMins - WINDOW_START) / (WINDOW_END - WINDOW_START) * 100));
@@ -871,41 +898,43 @@ function render() {
     timeLabel = `<span>${Math.floor(rem/60)}h ${pad(rem%60)}m</span> left in window`;
   }
 
-  document.body.innerHTML = `
-    <div class="streak-card">
-      <div class="streak-fire">${fireEmoji}</div>
-      <div class="streak-info">
-        <div class="streak-num">${sd.streak}<span>day streak</span></div>
-        <div class="streak-sub">${streakSub}</div>
-        <button class="streak-btn ${btnClass}"
-          onclick="${claimedToday || !isPast12 ? '' : 'claimAndCelebrate()'}"
-        >${btnText}</button>
-      </div>
-      <div class="streak-best">best<br><strong>${sd.best}</strong><br><br>total<br><strong>${sd.total || 0}</strong></div>
+  document.getElementById('chickenBar').innerHTML = `
+    <div class="chicken-bar-labels">
+      <span class="${!isFasting && !isDone ? 'active-label' : ''}">12 pm</span>
+      <span>eating window</span>
+      <span class="${isDone ? 'active-label' : ''}">8 pm</span>
     </div>
-
-    <div class="chicken-bar">
-      <div class="chicken-bar-labels">
-        <span class="${!isFasting && !isDone ? 'active-label' : ''}">12 pm</span>
-        <span>eating window</span>
-        <span class="${isDone ? 'active-label' : ''}">8 pm</span>
-      </div>
-      <div class="chicken-track">
-        <div class="chicken-fill" style="width:${pct}%"></div>
-        <div class="chicken-icon" style="left:${Math.max(4, Math.min(96, pct))}%">🐔</div>
-      </div>
-      <div class="chicken-time">${timeLabel}</div>
+    <div class="chicken-track">
+      <div class="chicken-fill" style="width:${pct}%"></div>
+      <div class="chicken-icon" style="left:${Math.max(4, Math.min(96, pct))}%">🐔</div>
     </div>
-
-    <div id="weightSection"></div>
-
-    <div class="footer">updated ${fmt12(h, m)}</div>`;
-
-  renderWeightSection();
+    <div class="chicken-time">${timeLabel}</div>`;
 }
 
-render();
-setInterval(render, 60000);
+// ── Tick (every 60s — only updates time-sensitive parts) ───
+function tick() {
+  renderStreakCard();
+  renderChickenBar();
+  const now = new Date();
+  document.getElementById('footer').textContent = `updated ${fmt12(now.getHours(), now.getMinutes())}`;
+}
+
+// ── Init ───────────────────────────────────────────────────
+function init() {
+  document.body.innerHTML = `
+    <div class="streak-card" id="streakCard"></div>
+    <div class="chicken-bar" id="chickenBar"></div>
+    <div id="weightSection"></div>
+    <div class="footer" id="footer"></div>`;
+
+  renderStreakCard();
+  renderChickenBar();
+  renderWeightSection();
+  tick();
+}
+
+init();
+setInterval(tick, 60000);
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js');
