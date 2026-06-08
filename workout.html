@@ -45,15 +45,25 @@
       letter-spacing: 0.5px;
     }
 
-    .back-link {
-      display: inline-block;
+    /* ── Back button ── */
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
       margin-bottom: 14px;
-      font-size: 13px;
-      color: var(--dim);
       text-decoration: none;
+      width: fit-content;
+      transition: opacity 0.15s, border-color 0.15s;
     }
+    .back-btn:active { opacity: 0.7; }
+    .back-btn-arrow { color: var(--orange); font-size: 16px; line-height: 1; }
+    .back-btn-label { color: var(--dim); font-size: 13px; font-weight: 600; }
 
-    /* Progress card */
+    /* ── Progress card ── */
     .progress-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -74,17 +84,8 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .progress-count {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--orange);
-    }
-    .progress-track {
-      height: 8px;
-      background: var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-    }
+    .progress-count { font-size: 14px; font-weight: 700; color: var(--orange); }
+    .progress-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
     .progress-fill {
       height: 100%;
       background: linear-gradient(90deg, #ff6600, #FFAA00);
@@ -109,7 +110,7 @@
     }
     .reset-btn:active { color: var(--orange); }
 
-    /* Day cards */
+    /* ── Day cards ── */
     .day-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -130,7 +131,6 @@
       gap: 12px;
       user-select: none;
     }
-
     .day-check {
       width: 24px;
       height: 24px;
@@ -144,8 +144,8 @@
       cursor: pointer;
       font-size: 13px;
     }
-    .day-check.checked    { background: var(--green); border-color: var(--green); color: #111; }
-    .day-check.rest-dot   { border-color: var(--dim); color: var(--dim); font-size: 10px; }
+    .day-check.checked  { background: var(--green); border-color: var(--green); color: #111; }
+    .day-check.rest-dot { border-color: var(--dim); color: var(--dim); font-size: 10px; }
 
     .day-info { flex: 1; min-width: 0; }
     .day-name {
@@ -156,8 +156,8 @@
       align-items: center;
       gap: 6px;
     }
-    .day-card.today     .day-name  { color: var(--cyan); }
-    .day-card.completed .day-name  { color: var(--green); }
+    .day-card.today     .day-name { color: var(--cyan); }
+    .day-card.completed .day-name { color: var(--green); }
     .day-subtitle { font-size: 12px; color: var(--dim); margin-top: 2px; }
 
     .today-badge {
@@ -184,20 +184,11 @@
       background: rgba(136,221,136,0.1);
       border-color: rgba(136,221,136,0.2);
     }
-    .chevron {
-      color: var(--dim);
-      font-size: 11px;
-      transition: transform 0.2s;
-      flex-shrink: 0;
-    }
+    .chevron { color: var(--dim); font-size: 11px; transition: transform 0.2s; flex-shrink: 0; }
     .chevron.open { transform: rotate(90deg); }
 
-    /* Exercise list */
-    .exercise-list {
-      display: none;
-      padding: 0 16px 14px;
-      border-top: 1px solid var(--border);
-    }
+    /* ── Exercise list ── */
+    .exercise-list { display: none; padding: 0 16px 14px; border-top: 1px solid var(--border); }
     .exercise-list.open { display: block; }
 
     .section-label {
@@ -247,7 +238,6 @@
       color: var(--dim);
       line-height: 1.5;
     }
-
     .mark-done-btn {
       display: block;
       width: 100%;
@@ -430,7 +420,10 @@ function render() {
   const weekLabel = monday.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
 
   let html = `
-    <a class="back-link" href="meal.html">&#8592; Back to tracker</a>
+    <a class="back-btn" href="meal.html">
+      <span class="back-btn-arrow">&#8592;</span>
+      <span class="back-btn-label">Home</span>
+    </a>
     <h1>&#128170; Workout Schedule</h1>
     <div class="progress-card">
       <div class="progress-header">
