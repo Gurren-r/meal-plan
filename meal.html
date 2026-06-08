@@ -116,13 +116,14 @@
     .chicken-time { text-align: center; font-size: 12px; color: var(--dim); margin-top: 6px; }
     .chicken-time span { color: var(--yellow); font-weight: 600; }
 
-    /* ── Nav buttons ── */
+    /* ── Nav buttons (workout) ── */
     .nav-btn {
       display: flex;
       align-items: center;
       justify-content: space-between;
       background: var(--surface);
       border: 1px solid var(--border);
+      border-left: 3px solid var(--orange);
       border-radius: 12px;
       padding: 14px 16px;
       margin-bottom: 10px;
@@ -132,16 +133,105 @@
     }
     .nav-btn:active { opacity: 0.7; }
     .nav-btn-left { display: flex; align-items: center; gap: 12px; }
-    .nav-btn-icon { font-size: 24px; line-height: 1; }
-    .nav-btn-label { font-size: 14px; font-weight: 700; }
+    .nav-btn-icon  { font-size: 24px; line-height: 1; }
+    .nav-btn-label { font-size: 14px; font-weight: 700; color: var(--orange); }
     .nav-btn-sub   { font-size: 11px; color: var(--dim); margin-top: 2px; }
     .nav-btn-arrow { color: var(--dim); font-size: 18px; }
 
-    .nav-btn.workout { border-left: 3px solid var(--orange); }
-    .nav-btn.workout .nav-btn-label { color: var(--orange); }
+    /* ── Weight card (split: link header + quick-add body) ── */
+    .weight-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--cyan);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .weight-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 12px;
+      text-decoration: none;
+      color: var(--text);
+      transition: opacity 0.15s;
+    }
+    .weight-card-header:active { opacity: 0.7; }
+    .weight-card-left { display: flex; align-items: center; gap: 12px; }
+    .weight-card-icon  { font-size: 24px; line-height: 1; }
+    .weight-card-label { font-size: 14px; font-weight: 700; color: var(--cyan); }
+    .weight-card-sub   { font-size: 11px; color: var(--dim); margin-top: 2px; }
+    .weight-card-arrow { color: var(--dim); font-size: 18px; }
 
-    .nav-btn.weight  { border-left: 3px solid var(--cyan); }
-    .nav-btn.weight  .nav-btn-label { color: var(--cyan); }
+    .weight-card-body {
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+    }
+
+    /* not-yet-logged state */
+    .quick-add-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .quick-add-row input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 17px;
+      font-weight: 600;
+      padding: 9px 13px;
+      outline: none;
+      -moz-appearance: textfield;
+    }
+    .quick-add-row input::-webkit-outer-spin-button,
+    .quick-add-row input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .quick-add-row input:focus { border-color: var(--cyan); }
+    .quick-add-row input::placeholder { color: var(--dim); font-weight: 400; }
+    .quick-log-btn {
+      background: var(--cyan);
+      color: #111;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 16px;
+      cursor: pointer;
+      transition: transform 0.1s;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .quick-log-btn:active { transform: scale(0.96); }
+
+    /* logged state */
+    .quick-logged-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .quick-logged-left { display: flex; align-items: baseline; gap: 6px; }
+    .quick-logged-val  { font-size: 28px; font-weight: 700; color: var(--cyan); line-height: 1; }
+    .quick-logged-unit { font-size: 13px; color: var(--dim); }
+    .quick-logged-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+      background: rgba(136,221,136,0.1);
+      border: 1px solid rgba(136,221,136,0.25);
+      border-radius: 6px;
+      padding: 2px 7px;
+    }
+    .quick-edit-btn {
+      background: var(--border);
+      color: var(--dim);
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
 
     /* ── Confetti ── */
     .confetti-piece {
@@ -172,6 +262,25 @@ function fmt12(h, m) {
 }
 function dateStr(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ── Weight helpers ────────────────────────────────────────
+function loadWeightLog() {
+  try { return JSON.parse(localStorage.getItem('weightLog')) || []; }
+  catch { return []; }
+}
+function saveWeightEntry(lbs) {
+  const log = loadWeightLog();
+  const today = dateStr(new Date());
+  const idx = log.findIndex(e => e.date === today);
+  if (idx >= 0) log[idx].weight = lbs;
+  else log.push({ date: today, weight: lbs });
+  log.sort((a, b) => a.date.localeCompare(b.date));
+  localStorage.setItem('weightLog', JSON.stringify(log));
+}
+function getTodayWeight() {
+  const today = dateStr(new Date());
+  return loadWeightLog().find(e => e.date === today) || null;
 }
 
 // ── Fasting streak ────────────────────────────────────────
@@ -209,6 +318,22 @@ function confetti(count = 80) {
 }
 function claimAndCelebrate() { claimStreak(); confetti(); renderStreakCard(); }
 
+// ── Quick-add weight ──────────────────────────────────────
+function quickLogWeight() {
+  const inp = document.getElementById('quickWeightInput');
+  const val = parseFloat(inp.value);
+  if (isNaN(val) || val < 50 || val > 700) {
+    inp.focus();
+    return;
+  }
+  saveWeightEntry(val);
+  renderWeightCard();
+}
+
+function quickEditWeight() {
+  renderWeightCard(true);
+}
+
 // ── Streak card ───────────────────────────────────────────
 function renderStreakCard() {
   const now = new Date();
@@ -223,9 +348,9 @@ function renderStreakCard() {
     : `${sd.streak} day${sd.streak !== 1 ? 's' : ''} — keep it going!`;
 
   let btnClass, btnText, btnAttrs;
-  if (claimedToday)  { btnClass = 'done';  btnText = '✓ Fasted today';              btnAttrs = 'disabled'; }
-  else if (isPast12) { btnClass = 'ready'; btnText = '🔥 I fasted today';            btnAttrs = 'onclick="claimAndCelebrate()"'; }
-  else               { btnClass = 'early'; btnText = '⏳ Window opens at 12:00 pm';  btnAttrs = 'disabled'; }
+  if (claimedToday)  { btnClass = 'done';  btnText = '✓ Fasted today';             btnAttrs = 'disabled'; }
+  else if (isPast12) { btnClass = 'ready'; btnText = '🔥 I fasted today';           btnAttrs = 'onclick="claimAndCelebrate()"'; }
+  else               { btnClass = 'early'; btnText = '⏳ Window opens at 12:00 pm'; btnAttrs = 'disabled'; }
 
   document.getElementById('streakCard').innerHTML = `
     <div class="streak-fire">${fireEmoji}</div>
@@ -235,6 +360,51 @@ function renderStreakCard() {
       <button class="streak-btn ${btnClass}" ${btnAttrs}>${btnText}</button>
     </div>
     <div class="streak-best">best<br><strong>${sd.best}</strong><br><br>total<br><strong>${sd.total}</strong></div>`;
+}
+
+// ── Weight card ───────────────────────────────────────────
+function renderWeightCard(forceEdit = false) {
+  const entry = getTodayWeight();
+  let bodyHTML;
+
+  if (entry && !forceEdit) {
+    bodyHTML = `
+      <div class="quick-logged-row">
+        <div class="quick-logged-left">
+          <div class="quick-logged-val">${entry.weight}</div>
+          <div class="quick-logged-unit">lbs</div>
+          <div class="quick-logged-badge">&#10003; logged today</div>
+        </div>
+        <button class="quick-edit-btn" onclick="quickEditWeight()">&#9999;&#65039; edit</button>
+      </div>`;
+  } else {
+    const pre = (forceEdit && entry) ? entry.weight : '';
+    bodyHTML = `
+      <div class="quick-add-row">
+        <input type="number" id="quickWeightInput" placeholder="Enter weight (lbs)"
+               step="0.1" min="50" max="700" value="${pre}" inputmode="decimal"
+               onkeydown="if(event.key==='Enter')quickLogWeight()">
+        <button class="quick-log-btn" onclick="quickLogWeight()">LOG</button>
+      </div>`;
+  }
+
+  document.getElementById('weightCard').innerHTML = `
+    <a class="weight-card-header" href="weight.html">
+      <div class="weight-card-left">
+        <span class="weight-card-icon">&#9878;&#65039;</span>
+        <div>
+          <div class="weight-card-label">Weight Tracker</div>
+          <div class="weight-card-sub">Tap to see full history &amp; chart</div>
+        </div>
+      </div>
+      <span class="weight-card-arrow">&#8594;</span>
+    </a>
+    <div class="weight-card-body">${bodyHTML}</div>`;
+
+  if (!entry || forceEdit) {
+    const inp = document.getElementById('quickWeightInput');
+    if (inp && forceEdit) inp.focus();
+  }
 }
 
 // ── Chicken bar ───────────────────────────────────────────
@@ -284,7 +454,7 @@ function init() {
   document.body.innerHTML = `
     <div class="streak-card" id="streakCard"></div>
     <div class="chicken-bar" id="chickenBar"></div>
-    <a class="nav-btn workout" href="workout.html">
+    <a class="nav-btn" href="workout.html">
       <div class="nav-btn-left">
         <span class="nav-btn-icon">&#128170;</span>
         <div>
@@ -294,18 +464,12 @@ function init() {
       </div>
       <span class="nav-btn-arrow">&#8594;</span>
     </a>
-    <a class="nav-btn weight" href="weight.html">
-      <div class="nav-btn-left">
-        <span class="nav-btn-icon">&#9878;&#65039;</span>
-        <div>
-          <div class="nav-btn-label">Weight Tracker</div>
-          <div class="nav-btn-sub">Log weight, track progress &amp; milestones</div>
-        </div>
-      </div>
-      <span class="nav-btn-arrow">&#8594;</span>
-    </a>
+    <div class="weight-card" id="weightCard"></div>
     <div class="footer" id="footer"></div>`;
 
+  renderStreakCard();
+  renderChickenBar();
+  renderWeightCard();
   tick();
 }
 
