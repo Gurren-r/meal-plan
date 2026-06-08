@@ -465,22 +465,42 @@ function loadGoal() {
 function saveGoal(g) { localStorage.setItem('weightGoal', String(g)); }
 
 // ── Milestones ─────────────────────────────────────────────
-const MILESTONES = [
-  { lbs: 5,  icon: '🌱', label: '-5 lbs'  },
-  { lbs: 10, icon: '💪', label: '-10 lbs' },
-  { lbs: 15, icon: '🔥', label: '-15 lbs' },
-  { lbs: 20, icon: '⚡', label: '-20 lbs' },
-  { lbs: 25, icon: '🏆', label: '-25 lbs' },
-  { lbs: 30, icon: '👑', label: '-30 lbs' },
-];
-function checkNewMilestones(log) {
-  if (log.length < 2) return [];
+const MS_ICONS = ['🌱', '💪', '🔥', '⚡', '🏆', '👑'];
+
+function getMilestones(start, goal) {
+  const ICONS = MS_ICONS;
+  // If no goal set or goal >= start (gaining), use fixed defaults
+  const total = start && goal ? start - goal : 0;
+  if (total <= 0) return [
+    { lbs: 5,  icon: ICONS[0], label: '-5 lbs'  },
+    { lbs: 10, icon: ICONS[1], label: '-10 lbs' },
+    { lbs: 15, icon: ICONS[2], label: '-15 lbs' },
+    { lbs: 20, icon: ICONS[3], label: '-20 lbs' },
+    { lbs: 25, icon: ICONS[4], label: '-25 lbs' },
+    { lbs: 30, icon: ICONS[5], label: '-30 lbs' },
+  ];
+  // Round interval to a clean number based on total range
+  const interval = total / ICONS.length;
+  const snap = total >= 60 ? 5 : total >= 24 ? 2 : 1;
+  const milestones = [];
+  for (let i = 0; i < ICONS.length; i++) {
+    const raw = i === ICONS.length - 1 ? total : Math.round((interval * (i + 1)) / snap) * snap;
+    const lbs = Math.max(raw, milestones.length ? milestones[milestones.length - 1].lbs + 1 : 1);
+    milestones.push({ lbs: Math.round(lbs), icon: ICONS[i], label: `-${Math.round(lbs)} lbs` });
+  }
+  return milestones;
+}
+
+function checkNewMilestones(log, milestones) {
+  if (log.length < 2) return false;
   const lost = log[0].weight - log[log.length - 1].weight;
-  const reached = MILESTONES.filter(m => lost >= m.lbs).map(m => m.lbs);
-  const prev = JSON.parse(localStorage.getItem('reachedMilestones') || '[]');
-  const fresh = reached.filter(m => !prev.includes(m));
-  localStorage.setItem('reachedMilestones', JSON.stringify(reached));
-  return fresh;
+  const nowReached = milestones.filter(m => lost >= m.lbs).length;
+  const prevReached = parseInt(localStorage.getItem('milestonesReached') || '0');
+  if (nowReached > prevReached) {
+    localStorage.setItem('milestonesReached', String(nowReached));
+    return true;
+  }
+  return false;
 }
 
 // ── Confetti ───────────────────────────────────────────────
@@ -512,8 +532,8 @@ function logWeight() {
   if (isNaN(val) || val < 50 || val > 700) return;
   saveWeightEntry(val);
   const log = loadWeightLog();
-  const fresh = checkNewMilestones(log);
-  if (fresh.length) confetti(120);
+  const milestones = getMilestones(log.length ? log[0].weight : null, loadGoal());
+  if (checkNewMilestones(log, milestones)) confetti(120);
   renderWeightSection();
 }
 
@@ -636,12 +656,12 @@ function renderWeightSection(forceEdit = false, editPrefill = null) {
   const goal    = loadGoal();
   const today   = dateStr(new Date());
   const todayEntry = log.find(e => e.date === today);
-  const reached = JSON.parse(localStorage.getItem('reachedMilestones') || '[]');
-
   // Stats
   const hasData = log.length > 0;
   const current = hasData ? log[log.length - 1].weight : null;
   const start   = hasData ? log[0].weight : null;
+  const milestones = getMilestones(start, goal);
+  const milestonesReached = parseInt(localStorage.getItem('milestonesReached') || '0');
   const totalChange = hasData && log.length > 1 ? current - start : null;
 
   let trend7 = null;
@@ -770,8 +790,9 @@ function renderWeightSection(forceEdit = false, editPrefill = null) {
   }
 
   // Milestones HTML
-  const msHTML = MILESTONES.map(m => {
-    const unlocked = reached.includes(m.lbs);
+  const lost = start && current ? start - current : 0;
+  const msHTML = milestones.map((m, i) => {
+    const unlocked = i < milestonesReached;
     return `
       <div class="milestone-badge${unlocked ? ' unlocked' : ''}">
         <div class="ms-icon">${m.icon}</div>
