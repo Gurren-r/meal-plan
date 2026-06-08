@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#111111">
+  <title>Workout Schedule</title>
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    :root {
+      --bg:      #111111;
+      --surface: #1a1a1a;
+      --border:  #2a2a2a;
+      --text:    #e0e0e0;
+      --dim:     #555555;
+      --orange:  #FFAA00;
+      --green:   #88DD88;
+      --cyan:    #00CCFF;
+      --yellow:  #FFE066;
+      --pink:    #FF88CC;
+      --mint:    #55DDBB;
+      --red:     #FF6666;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      min-height: 100vh;
+      padding: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--orange);
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: var(--dim);
+      text-decoration: none;
+    }
+
+    /* Progress card */
+    .progress-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .progress-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .progress-count {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--orange);
+    }
+    .progress-track {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff6600, #FFAA00);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+    .week-footer-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--dim);
+    }
+    .reset-btn {
+      background: none;
+      border: none;
+      color: var(--dim);
+      font-size: 11px;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .reset-btn:active { color: var(--orange); }
+
+    /* Day cards */
+    .day-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .day-card.completed { border-color: rgba(136,221,136,0.4); }
+    .day-card.rest      { opacity: 0.55; }
+    .day-card.today     { border-color: var(--cyan); }
+
+    .day-header {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      cursor: pointer;
+      gap: 12px;
+      user-select: none;
+    }
+
+    .day-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .day-check.checked    { background: var(--green); border-color: var(--green); color: #111; }
+    .day-check.rest-dot   { border-color: var(--dim); color: var(--dim); font-size: 10px; }
+
+    .day-info { flex: 1; min-width: 0; }
+    .day-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .day-card.today     .day-name  { color: var(--cyan); }
+    .day-card.completed .day-name  { color: var(--green); }
+    .day-subtitle { font-size: 12px; color: var(--dim); margin-top: 2px; }
+
+    .today-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--cyan);
+      background: rgba(0,204,255,0.1);
+      border: 1px solid rgba(0,204,255,0.3);
+      border-radius: 5px;
+      padding: 1px 5px;
+    }
+    .day-duration {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--orange);
+      background: rgba(255,170,0,0.1);
+      border: 1px solid rgba(255,170,0,0.2);
+      border-radius: 6px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+    .day-card.completed .day-duration {
+      color: var(--green);
+      background: rgba(136,221,136,0.1);
+      border-color: rgba(136,221,136,0.2);
+    }
+    .chevron {
+      color: var(--dim);
+      font-size: 11px;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .chevron.open { transform: rotate(90deg); }
+
+    /* Exercise list */
+    .exercise-list {
+      display: none;
+      padding: 0 16px 14px;
+      border-top: 1px solid var(--border);
+    }
+    .exercise-list.open { display: block; }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 12px 0 6px;
+    }
+    .exercise-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+    .exercise-item:last-of-type { border-bottom: none; }
+
+    .ex-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1.5px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      transition: all 0.15s;
+    }
+    .ex-check.checked { background: var(--green); border-color: var(--green); color: #111; }
+
+    .ex-label { flex: 1; font-size: 13px; color: var(--text); line-height: 1.35; }
+    .ex-label.checked { color: var(--dim); text-decoration: line-through; }
+    .ex-meta { font-size: 11px; color: var(--dim); white-space: nowrap; }
+
+    .tip-box {
+      background: rgba(0,204,255,0.05);
+      border: 1px solid rgba(0,204,255,0.12);
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--dim);
+      line-height: 1.5;
+    }
+
+    .mark-done-btn {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      background: var(--orange);
+      color: #111;
+      letter-spacing: 0.3px;
+    }
+    .mark-done-btn:active { transform: scale(0.97); }
+    .mark-done-btn.undone { background: var(--border); color: var(--dim); }
+
+    .footer {
+      text-align: center;
+      color: var(--border);
+      font-size: 11px;
+      margin-top: 8px;
+      padding-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+<script>
+// ── Week key (resets every Monday) ────────────────────────
+function getWeekKey() {
+  const d = new Date();
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return 'workout-' + monday.toISOString().slice(0, 10);
+}
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(getWeekKey())) || {}; }
+  catch { return {}; }
+}
+function saveState(s) { localStorage.setItem(getWeekKey(), JSON.stringify(s)); }
+
+// ── Schedule ──────────────────────────────────────────────
+const DAYS = [
+  {
+    id: 'mon', name: 'Monday', type: 'hiit',
+    subtitle: 'Bodyweight HIIT', duration: '20 min',
+    sections: [
+      { label: 'Warm-up', exercises: [
+        { id: 'w1', label: '5 min easy walk', meta: '5 min' }
+      ]},
+      { label: '3 Rounds — 30s work / 20s rest each', exercises: [
+        { id: 'e1', label: 'Wall push-ups', meta: '30s' },
+        { id: 'e2', label: 'Bodyweight squats', meta: '30s' },
+        { id: 'e3', label: 'Standing marching (slow high knees)', meta: '30s' },
+        { id: 'e4', label: 'Glute bridges (floor)', meta: '30s' },
+        { id: 'e5', label: 'Step touches side to side', meta: '30s' }
+      ]},
+      { label: 'Cool-down', exercises: [
+        { id: 'c1', label: '5 min easy walk', meta: '5 min' }
+      ]}
+    ],
+    tip: 'Rest 90 sec between rounds. All exercises are standing or floor — no jumping. Safe on joints.'
+  },
+  {
+    id: 'tue', name: 'Tuesday', type: 'walk',
+    subtitle: 'Brisk Walk + Core', duration: '30 min',
+    sections: [
+      { label: 'Cardio', exercises: [
+        { id: 'w2', label: 'Brisk walk — slightly breathless but can speak in short sentences', meta: '20 min' }
+      ]},
+      { label: 'Core (10 min)', exercises: [
+        { id: 'e6', label: 'Dead bug', meta: '3 × 10 reps' },
+        { id: 'e7', label: 'Plank', meta: '3 × 20 sec' },
+        { id: 'e8', label: 'Glute bridge hold', meta: '3 × 20 sec' }
+      ]}
+    ],
+    tip: 'Core work goes right after the walk — no rest needed between the two.'
+  },
+  {
+    id: 'wed', name: 'Wednesday', type: 'rest',
+    subtitle: 'Rest Day', duration: null,
+    sections: [],
+    tip: 'Full rest or a gentle 15-min stroll. Recovery is when fat loss actually happens — do not skip it.'
+  },
+  {
+    id: 'thu', name: 'Thursday', type: 'hiit',
+    subtitle: 'Bodyweight HIIT', duration: '20 min',
+    sections: [
+      { label: 'Warm-up', exercises: [
+        { id: 'w3', label: '5 min easy walk', meta: '5 min' }
+      ]},
+      { label: '3 Rounds — 30s work / 20s rest each', exercises: [
+        { id: 'e9',  label: 'Wall push-ups', meta: '30s' },
+        { id: 'e10', label: 'Bodyweight squats', meta: '30s' },
+        { id: 'e11', label: 'Standing marching (slow high knees)', meta: '30s' },
+        { id: 'e12', label: 'Glute bridges (floor)', meta: '30s' },
+        { id: 'e13', label: 'Step touches side to side', meta: '30s' }
+      ]},
+      { label: 'Cool-down', exercises: [
+        { id: 'c2', label: '5 min easy walk', meta: '5 min' }
+      ]}
+    ],
+    tip: 'Same as Monday. Push a little harder if Monday felt easy.'
+  },
+  {
+    id: 'fri', name: 'Friday', type: 'walk',
+    subtitle: 'Brisk Walk', duration: '30 min',
+    sections: [
+      { label: 'Cardio', exercises: [
+        { id: 'w4', label: 'Brisk walk — fast enough that talking is slightly difficult', meta: '30 min' }
+      ]}
+    ],
+    tip: 'Light day. Just get moving — no pressure to push hard today.'
+  },
+  {
+    id: 'sat', name: 'Saturday', type: 'circuit',
+    subtitle: 'Full Body Circuit', duration: '25 min',
+    sections: [
+      { label: '3 Rounds — 45s work / 15s rest', exercises: [
+        { id: 'e14', label: 'Squat to chair (sit and stand slowly)', meta: '45s' },
+        { id: 'e15', label: 'Wall push-ups', meta: '45s' },
+        { id: 'e16', label: 'Standing side leg raises', meta: '45s' },
+        { id: 'e17', label: 'Superman hold (floor, hold 2 sec each rep)', meta: '45s' },
+        { id: 'e18', label: 'Slow step touches', meta: '45s' }
+      ]}
+    ],
+    tip: 'Rest 60 sec between rounds. Focus on slow, controlled movement over speed.'
+  },
+  {
+    id: 'sun', name: 'Sunday', type: 'rest',
+    subtitle: 'Rest Day', duration: null,
+    sections: [],
+    tip: 'Full rest. You earned it — reset for the week ahead.'
+  }
+];
+
+const DAY_IDS = ['sun','mon','tue','wed','thu','fri','sat'];
+function getTodayId() { return DAY_IDS[new Date().getDay()]; }
+
+// ── Actions ───────────────────────────────────────────────
+function toggleExercise(dayId, exId) {
+  const s = loadState();
+  if (!s[dayId]) s[dayId] = { done: false, exercises: {} };
+  s[dayId].exercises[exId] = !s[dayId].exercises[exId];
+  saveState(s);
+  render();
+}
+function toggleDay(dayId) {
+  const s = loadState();
+  if (!s[dayId]) s[dayId] = { done: false, exercises: {} };
+  s[dayId].done = !s[dayId].done;
+  saveState(s);
+  render();
+}
+function toggleExpand(dayId) {
+  const list = document.getElementById('ex-' + dayId);
+  const chev = document.getElementById('ch-' + dayId);
+  if (!list) return;
+  const open = list.classList.toggle('open');
+  if (chev) chev.classList.toggle('open', open);
+}
+function resetWeek() {
+  if (!confirm('Reset this week\'s progress?')) return;
+  localStorage.removeItem(getWeekKey());
+  render();
+}
+
+// ── Render ────────────────────────────────────────────────
+function render() {
+  const s        = loadState();
+  const todayId  = getTodayId();
+  const workDays = DAYS.filter(d => d.type !== 'rest');
+  const done     = workDays.filter(d => s[d.id]?.done).length;
+  const total    = workDays.length;
+  const pct      = (done / total) * 100;
+
+  const monday = new Date();
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  const weekLabel = monday.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
+
+  let html = `
+    <a class="back-link" href="meal.html">&#8592; Back to tracker</a>
+    <h1>&#128170; Workout Schedule</h1>
+    <div class="progress-card">
+      <div class="progress-header">
+        <div class="progress-title">Week of ${weekLabel}</div>
+        <div class="progress-count">${done} / ${total} done</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:${pct.toFixed(1)}%"></div>
+      </div>
+      <div class="week-footer-row">
+        <span>${done === total ? '&#127881; Week complete!' : (total - done) + ' workout' + (total - done !== 1 ? 's' : '') + ' left'}</span>
+        <button class="reset-btn" onclick="resetWeek()">reset week</button>
+      </div>
+    </div>`;
+
+  for (const day of DAYS) {
+    const ds      = s[day.id] || { done: false, exercises: {} };
+    const isToday = day.id === todayId;
+    const isRest  = day.type === 'rest';
+    const isDone  = ds.done;
+
+    let cardCls = 'day-card';
+    if (isRest)       cardCls += ' rest';
+    else if (isDone)  cardCls += ' completed';
+    else if (isToday) cardCls += ' today';
+
+    const checkEl = isRest
+      ? `<div class="day-check rest-dot">Z</div>`
+      : `<div class="day-check${isDone ? ' checked' : ''}"
+              onclick="event.stopPropagation();toggleDay('${day.id}')">${isDone ? '&#10003;' : ''}</div>`;
+
+    const todayBadge = isToday && !isRest ? `<span class="today-badge">TODAY</span>` : '';
+    const durBadge   = day.duration ? `<span class="day-duration">${day.duration}</span>` : '';
+    const chevron    = !isRest ? `<span class="chevron" id="ch-${day.id}">&#9658;</span>` : '';
+
+    let listContent = '';
+    if (!isRest) {
+      for (const sec of day.sections) {
+        listContent += `<div class="section-label">${sec.label}</div>`;
+        for (const ex of sec.exercises) {
+          const chk = !!ds.exercises[ex.id];
+          listContent += `
+            <div class="exercise-item" onclick="toggleExercise('${day.id}','${ex.id}')">
+              <div class="ex-check${chk ? ' checked' : ''}">${chk ? '&#10003;' : ''}</div>
+              <div class="ex-label${chk ? ' checked' : ''}">${ex.label}</div>
+              <div class="ex-meta">${ex.meta}</div>
+            </div>`;
+        }
+      }
+      listContent += day.tip ? `<div class="tip-box">${day.tip}</div>` : '';
+      const btnCls   = isDone ? 'mark-done-btn undone' : 'mark-done-btn';
+      const btnLabel = isDone ? '&#8617; Mark as Not Done' : '&#10003; Mark Day Complete';
+      listContent += `<button class="${btnCls}" onclick="toggleDay('${day.id}')">${btnLabel}</button>`;
+    } else {
+      listContent += day.tip ? `<div class="tip-box" style="margin-top:10px">${day.tip}</div>` : '';
+    }
+
+    html += `
+      <div class="${cardCls}">
+        <div class="day-header" onclick="toggleExpand('${day.id}')">
+          ${checkEl}
+          <div class="day-info">
+            <div class="day-name">${day.name} ${todayBadge}</div>
+            <div class="day-subtitle">${day.subtitle}</div>
+          </div>
+          ${durBadge}
+          ${chevron}
+        </div>
+        <div class="exercise-list" id="ex-${day.id}">${listContent}</div>
+      </div>`;
+  }
+
+  html += `<div class="footer">Bodyweight Only &mdash; resets every Monday</div>`;
+  document.body.innerHTML = html;
+
+  // Auto-open today if not yet done
+  const tid = getTodayId();
+  if (tid && !loadState()[tid]?.done) {
+    const list = document.getElementById('ex-' + tid);
+    const chev = document.getElementById('ch-' + tid);
+    if (list) list.classList.add('open');
+    if (chev) chev.classList.add('open');
+  }
+}
+
+render();
+</script>
+</body>
+</html>
