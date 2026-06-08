@@ -121,6 +121,28 @@
     }
     .chicken-time span { color: var(--yellow); font-weight: 600; }
 
+    /* ── Workout nav button ── */
+    .workout-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--orange);
+      border-radius: 12px;
+      padding: 13px 16px;
+      margin-bottom: 12px;
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color 0.2s, opacity 0.15s;
+    }
+    .workout-nav:active { opacity: 0.75; }
+    .workout-nav-left { display: flex; align-items: center; gap: 10px; }
+    .workout-nav-icon { font-size: 22px; line-height: 1; }
+    .workout-nav-label { font-size: 14px; font-weight: 700; color: var(--orange); }
+    .workout-nav-sub   { font-size: 11px; color: var(--dim); margin-top: 2px; }
+    .workout-nav-arrow { color: var(--dim); font-size: 18px; }
+
     /* ── Weight entry card ── */
     .weight-entry-card {
       background: var(--surface);
@@ -813,7 +835,7 @@ function renderWeightSection(forceEdit = false, editPrefill = null) {
       </div>`;
   }
 
-  // Milestones HTML — unlocked based on actual lbs lost, not stored count
+  // Milestones HTML
   const lost = start && current ? start - current : 0;
   const msHTML = milestones.map(m => {
     const unlocked = lost >= m.lbs;
@@ -911,7 +933,7 @@ function renderChickenBar() {
     <div class="chicken-time">${timeLabel}</div>`;
 }
 
-// ── Tick (every 60s — only updates time-sensitive parts) ───
+// ── Tick ───────────────────────────────────────────────────
 function tick() {
   renderStreakCard();
   renderChickenBar();
@@ -924,6 +946,16 @@ function init() {
   document.body.innerHTML = `
     <div class="streak-card" id="streakCard"></div>
     <div class="chicken-bar" id="chickenBar"></div>
+    <a class="workout-nav" href="workout.html">
+      <div class="workout-nav-left">
+        <span class="workout-nav-icon">&#128170;</span>
+        <div>
+          <div class="workout-nav-label">Workout Schedule</div>
+          <div class="workout-nav-sub">Bodyweight &mdash; check off today's session</div>
+        </div>
+      </div>
+      <span class="workout-nav-arrow">&#8594;</span>
+    </a>
     <div id="weightSection"></div>
     <div class="footer" id="footer"></div>`;
 
