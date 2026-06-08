@@ -6,22 +6,23 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#111111">
-  <title>Meal Plan</title>
+  <title>Fast & Weight Log</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
   <style>
     :root {
-      --bg:        #111111;
-      --surface:   #1a1a1a;
-      --border:    #2a2a2a;
-      --text:      #e0e0e0;
-      --dim:       #555555;
-      --orange:    #FFAA00;
-      --green:     #88DD88;
-      --cyan:      #00CCFF;
-      --yellow:    #FFE066;
-      --pink:      #FF88CC;
-      --mint:      #55DDBB;
+      --bg:      #111111;
+      --surface: #1a1a1a;
+      --border:  #2a2a2a;
+      --text:    #e0e0e0;
+      --dim:     #555555;
+      --orange:  #FFAA00;
+      --green:   #88DD88;
+      --cyan:    #00CCFF;
+      --yellow:  #FFE066;
+      --pink:    #FF88CC;
+      --mint:    #55DDBB;
+      --red:     #FF6666;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,93 +37,6 @@
       max-width: 480px;
       margin: 0 auto;
     }
-
-    /* ── Day header ── */
-    .day-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--orange);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .day-num {
-      color: var(--orange);
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-    .day-meta { text-align: right; }
-    .day-cal  { color: var(--green); font-size: 14px; font-weight: 600; }
-    .day-fast { color: var(--dim); font-size: 12px; margin-top: 2px; }
-
-    /* ── Meal cards ── */
-    .meal-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 10px;
-    }
-
-    .meal-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .meal-icon  { font-size: 20px; }
-    .meal-info  { flex: 1; }
-    .meal-label { font-weight: 700; font-size: 14px; letter-spacing: 0.5px; }
-    .meal-time  { color: var(--dim); font-size: 12px; margin-top: 1px; }
-    .meal-cal   { color: var(--green); font-size: 13px; font-weight: 600; }
-
-    .breakfast .meal-label { color: var(--cyan); }
-    .snack     .meal-label { color: var(--yellow); }
-    .dinner    .meal-label { color: var(--pink); }
-    .evening   .meal-label { color: var(--mint); }
-
-    .breakfast { border-left: 3px solid var(--cyan); }
-    .snack     { border-left: 3px solid var(--yellow); }
-    .dinner    { border-left: 3px solid var(--pink); }
-    .evening   { border-left: 3px solid var(--mint); }
-
-    /* ── Food items ── */
-    .food-list { display: flex; flex-direction: column; gap: 6px; }
-
-    .food-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-    }
-    .food-name { color: var(--text); font-size: 14px; }
-    .food-dots {
-      flex: 1;
-      border-bottom: 1px dotted var(--border);
-      margin: 0 4px 3px;
-    }
-    .food-qty  { color: var(--dim); font-size: 13px; white-space: nowrap; }
-
-    /* ── Fasting screen ── */
-    .fasting-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--cyan);
-      border-radius: 12px;
-      padding: 32px 20px;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .fasting-title    { color: var(--cyan); font-size: 18px; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
-    .fasting-sub      { color: var(--dim); font-size: 13px; margin-bottom: 24px; }
-    .fasting-countdown { color: var(--yellow); font-size: 48px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
-    .fasting-label    { color: var(--dim); font-size: 13px; }
 
     /* ── Streak card ── */
     .streak-card {
@@ -206,6 +120,274 @@
     }
     .chicken-time span { color: var(--yellow); font-weight: 600; }
 
+    /* ── Weight entry card ── */
+    .weight-entry-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--cyan);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+    .weight-entry-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .weight-entry-icon { font-size: 22px; }
+    .weight-entry-title { flex: 1; font-weight: 700; font-size: 14px; letter-spacing: 0.5px; color: var(--cyan); }
+    .weight-today-badge {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--orange);
+      background: rgba(255,170,0,0.1);
+      border: 1px solid rgba(255,170,0,0.3);
+      border-radius: 8px;
+      padding: 3px 9px;
+    }
+    .weight-input-row {
+      display: flex;
+      gap: 8px;
+    }
+    .weight-input-row input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 600;
+      padding: 10px 14px;
+      outline: none;
+      -moz-appearance: textfield;
+    }
+    .weight-input-row input::-webkit-outer-spin-button,
+    .weight-input-row input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .weight-input-row input:focus { border-color: var(--cyan); }
+    .weight-input-row input::placeholder { color: var(--dim); font-weight: 400; }
+    .weight-log-btn {
+      background: var(--cyan);
+      color: #111;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 18px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.5px;
+    }
+    .weight-log-btn:active { transform: scale(0.96); }
+    .weight-logged-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .weight-logged-val {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--cyan);
+      line-height: 1;
+    }
+    .weight-logged-unit { font-size: 16px; color: var(--dim); margin-left: 4px; }
+    .weight-edit-btn {
+      background: var(--border);
+      color: var(--dim);
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    .weight-logged-date { font-size: 12px; color: var(--dim); margin-top: 4px; }
+
+    /* ── Stats strip ── */
+    .weight-stats-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .stat-block { text-align: center; flex: 1; }
+    .stat-block + .stat-block { border-left: 1px solid var(--border); }
+    .stat-val { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; }
+    .stat-label { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-val.positive { color: var(--green); }
+    .stat-val.negative { color: var(--red); }
+    .stat-val.neutral  { color: var(--dim); }
+
+    /* ── Chart card ── */
+    .weight-chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px 10px;
+      margin-bottom: 10px;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .chart-title { font-size: 12px; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.5px; }
+    .chart-range-btns { display: flex; gap: 4px; }
+    .chart-range-btn {
+      background: var(--border);
+      color: var(--dim);
+      border: none;
+      border-radius: 6px;
+      font-size: 11px;
+      padding: 3px 8px;
+      cursor: pointer;
+    }
+    .chart-range-btn.active { background: rgba(255,170,0,0.2); color: var(--orange); }
+    .weight-svg-wrap { width: 100%; }
+    .weight-svg-wrap svg { width: 100%; display: block; overflow: visible; }
+    .chart-empty {
+      text-align: center;
+      color: var(--dim);
+      font-size: 13px;
+      padding: 24px 0;
+    }
+    .chart-empty span { font-size: 28px; display: block; margin-bottom: 6px; }
+
+    /* ── Goal card ── */
+    .weight-goal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+    .goal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .goal-title { font-size: 13px; font-weight: 700; color: var(--yellow); letter-spacing: 0.5px; }
+    .goal-edit-btn {
+      background: none;
+      border: none;
+      color: var(--dim);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+    .goal-set-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .goal-set-row input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 600;
+      padding: 8px 12px;
+      outline: none;
+      -moz-appearance: textfield;
+    }
+    .goal-set-row input::-webkit-outer-spin-button,
+    .goal-set-row input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .goal-set-row input:focus { border-color: var(--yellow); }
+    .goal-set-btn {
+      background: var(--yellow);
+      color: #111;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .goal-progress-wrap { margin-bottom: 8px; }
+    .goal-progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--dim);
+      margin-bottom: 5px;
+    }
+    .goal-track {
+      height: 10px;
+      background: var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .goal-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--yellow));
+      border-radius: 5px;
+      transition: width 0.8s ease;
+    }
+    .goal-stats-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--dim);
+      margin-top: 8px;
+    }
+    .goal-stats-row strong { color: var(--yellow); }
+    .goal-no-current {
+      font-size: 12px;
+      color: var(--dim);
+      text-align: center;
+      padding: 4px 0;
+    }
+
+    /* ── Milestones ── */
+    .milestones-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+    .milestones-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+    .milestones-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .milestone-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      flex: 1;
+      min-width: 48px;
+      opacity: 0.35;
+      transition: opacity 0.3s, border 0.3s;
+      border: 1px solid transparent;
+    }
+    .milestone-badge.unlocked {
+      opacity: 1;
+      border-color: rgba(255,170,0,0.4);
+      background: rgba(255,170,0,0.08);
+    }
+    .milestone-badge.unlocked .ms-icon { filter: none; }
+    .ms-icon { font-size: 20px; line-height: 1; margin-bottom: 3px; filter: grayscale(1); }
+    .ms-label { font-size: 10px; color: var(--dim); font-weight: 600; }
+    .milestone-badge.unlocked .ms-label { color: var(--orange); }
+
     /* ── Confetti ── */
     .confetti-piece {
       position: fixed;
@@ -217,7 +399,7 @@
       animation: confetti-fall linear forwards;
     }
     @keyframes confetti-fall {
-      0%   { transform: translateY(0) rotate(0deg);   opacity: 1; }
+      0%   { transform: translateY(0) rotate(0deg);      opacity: 1; }
       100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
     }
 
@@ -233,298 +415,412 @@
 </head>
 <body>
 <script>
-const DAYS = [
-  {
-    num: 'DAY 1', cal: '~2240 cal',
-    meals: {
-      breakfast: { time: '12:00 pm', cal: '~540 cal', items: [
-        ['Scrambled eggs',          '3 large'],
-        ['Sourdough toast',         '2 slices'],
-        ['Butter',                  '1 tsp'],
-        ['Hot sauce',               'to taste'],
-        ['Green tea',               '1 cup'],
-      ]},
-      snack: { time: '3:30 pm', cal: '~300 cal', items: [
-        ['Greek yogurt 2%',         'half cup'],
-        ['Kirkland mixed nuts',     '1.5 oz'],
-        ['Chia seeds',              '1 tbsp'],
-      ]},
-      dinner: { time: '6:30 pm', cal: '~740 cal', items: [
-        ['Chicken breast',          '6 oz'],
-        ['Brown rice',              '1 cup cooked'],
-        ['Broccoli',                '1 cup steamed'],
-        ['Olive oil',               '1 tbsp'],
-        ['Lemon',                   'half'],
-        ['Garlic powder + paprika', 'to taste'],
-      ]},
-      evening: { time: '7:30 pm', cal: '~220 cal', items: [
-        ['Kirkland nut butter',     '2 tbsp'],
-        ['Dark chocolate 70%',      '2 squares'],
-      ]},
-    }
-  },
-  {
-    num: 'DAY 2', cal: '~2260 cal',
-    meals: {
-      breakfast: { time: '12:00 pm', cal: '~560 cal', items: [
-        ['Bolthouse Green Goodness','1 bottle'],
-        ['Hard boiled eggs',        '3 eggs'],
-        ['Kirkland nut butter',     '1 tbsp'],
-      ]},
-      snack: { time: '3:30 pm', cal: '~280 cal', items: [
-        ['Greek yogurt 2%',         'half cup'],
-        ['Chia seeds',              '1 tbsp'],
-        ['Kirkland mixed nuts',     '1 oz'],
-      ]},
-      dinner: { time: '6:30 pm', cal: '~750 cal', items: [
-        ['Chicken thighs skinless', '6 oz'],
-        ['Quinoa',                  '3/4 cup cooked'],
-        ['Frozen veggie mix',       '1 cup'],
-        ['Olive oil',               '1 tbsp'],
-        ['Cumin + garlic powder',   'to taste'],
-      ]},
-      evening: { time: '7:30 pm', cal: '~220 cal', items: [
-        ['Hard boiled eggs',        '3 eggs'],
-        ['Hot sauce',               'to taste'],
-        ['Dark chocolate',          '1 square'],
-      ]},
-    }
-  },
-  {
-    num: 'DAY 3', cal: '~2280 cal',
-    meals: {
-      breakfast: { time: '12:00 pm', cal: '~570 cal', items: [
-        ['Eggs (3 whole + 2 whites)',''],
-        ['Feta cheese',             '1 oz'],
-        ['Tomato + frozen veg',     'half cup'],
-        ['Sourdough toast',         '1 slice'],
-        ['Butter',                  '1 tsp'],
-      ]},
-      snack: { time: '3:30 pm', cal: '~300 cal', items: [
-        ['Greek yogurt 2%',         'half cup'],
-        ['Kirkland mixed nuts',     '1.5 oz'],
-        ['Dark chocolate 70%',      '1 square'],
-      ]},
-      dinner: { time: '6:30 pm', cal: '~760 cal', items: [
-        ['Lean beef strips',        '6 oz'],
-        ['Brown rice',              '1 cup cooked'],
-        ['Frozen veg + broccoli',   '1.5 cups'],
-        ['Soy sauce low sodium',    '1 tbsp'],
-        ['Sesame oil',              '1 tbsp'],
-        ['Garlic powder',           'to taste'],
-      ]},
-      evening: { time: '7:30 pm', cal: '~220 cal', items: [
-        ['Sourdough bread',         '1 slice'],
-        ['Kirkland nut butter',     '2 tbsp'],
-      ]},
-    }
-  },
-  {
-    num: 'DAY 4', cal: '~2230 cal',
-    meals: {
-      breakfast: { time: '12:00 pm', cal: '~520 cal', items: [
-        ['Scrambled eggs',          '3 large'],
-        ['Feta cheese',             '1 oz'],
-        ['Sourdough toast',         '2 slices'],
-        ['Hot sauce',               'to taste'],
-        ['Oolong tea',              '1 cup'],
-      ]},
-      snack: { time: '3:30 pm', cal: '~290 cal', items: [
-        ['Kirkland nut butter',     '2 tbsp'],
-        ['Kirkland mixed nuts',     'half oz'],
-        ['Dark chocolate 70%',      '2 squares'],
-      ]},
-      dinner: { time: '6:30 pm', cal: '~760 cal', items: [
-        ['Lean ground beef 90/10',  '6 oz'],
-        ['Lentils',                 '1/4 cup cooked'],
-        ['Brown rice',              '3/4 cup cooked'],
-        ['Frozen veggie mix',       '1 cup'],
-        ['Olive oil',               '1 tbsp'],
-        ['Cumin + paprika',         'to taste'],
-      ]},
-      evening: { time: '7:30 pm', cal: '~220 cal', items: [
-        ['Greek yogurt 2%',         '1/3 cup'],
-        ['Chia seeds',              '1 tbsp'],
-        ['Kirkland mixed nuts',     '1 oz'],
-      ]},
-    }
-  },
-  {
-    num: 'DAY 5', cal: '~2250 cal',
-    meals: {
-      breakfast: { time: '12:00 pm', cal: '~540 cal', items: [
-        ['Fried eggs',              '3 large'],
-        ['Sourdough toast',         '2 slices'],
-        ['Butter',                  '1 tsp'],
-        ['Hot sauce',               'to taste'],
-        ['Green tea',               '1 cup'],
-      ]},
-      snack: { time: '3:30 pm', cal: '~300 cal', items: [
-        ['Greek yogurt 2%',         'half cup'],
-        ['Kirkland nut butter',     '2 tbsp'],
-        ['Chia seeds',              '1 tbsp'],
-      ]},
-      dinner: { time: '6:30 pm', cal: '~750 cal', items: [
-        ['Chicken thighs skinless', '6 oz'],
-        ['Black beans',             'half cup'],
-        ['Frozen veggie mix',       '1 cup'],
-        ['Olive oil',               '1 tbsp'],
-        ['Cumin + garlic powder',   'to taste'],
-        ['Lemon',                   'half'],
-      ]},
-      evening: { time: '7:30 pm', cal: '~220 cal', items: [
-        ['Hard boiled eggs',        '2 eggs'],
-        ['Kirkland mixed nuts',     '1 oz'],
-      ]},
-    }
-  },
-  {
-    num: 'DAY 6', cal: '~2240 cal',
-    meals: {
-      breakfast: { time: '12:00 pm', cal: '~550 cal', items: [
-        ['Bolthouse Green Goodness','1 bottle'],
-        ['Hard boiled eggs',        '2 eggs'],
-        ['Kirkland nut butter',     '1 tbsp'],
-      ]},
-      snack: { time: '3:30 pm', cal: '~290 cal', items: [
-        ['Greek yogurt 2%',         'half cup'],
-        ['Kirkland mixed nuts',     '1.5 oz'],
-        ['Chia seeds',              '1 tsp'],
-      ]},
-      dinner: { time: '6:30 pm', cal: '~750 cal', items: [
-        ['Lean ground beef 90/10',  '6 oz'],
-        ['Quinoa',                  '3/4 cup cooked'],
-        ['Broccoli',                '1 cup steamed'],
-        ['Olive oil',               '1 tbsp'],
-        ['Onion powder + paprika',  'to taste'],
-      ]},
-      evening: { time: '7:30 pm', cal: '~220 cal', items: [
-        ['Scrambled eggs',          '2 large'],
-        ['Shredded cheddar',        '1 oz'],
-        ['Hot sauce',               'to taste'],
-      ]},
-    }
-  },
-  {
-    num: 'DAY 7', cal: '~2260 cal',
-    meals: {
-      breakfast: { time: '12:00 pm', cal: '~560 cal', items: [
-        ['Scrambled eggs',          '3 large'],
-        ['Shredded cheddar',        '1 oz'],
-        ['Frozen veggie mix',       'half cup'],
-        ['Sourdough toast',         '2 slices'],
-        ['Ginger tea',              '1 cup'],
-      ]},
-      snack: { time: '3:30 pm', cal: '~290 cal', items: [
-        ['Greek yogurt 2%',         'half cup'],
-        ['Chia seeds',              '1 tbsp'],
-        ['Kirkland mixed nuts',     '1 oz'],
-      ]},
-      dinner: { time: '6:30 pm', cal: '~760 cal', items: [
-        ['Lean beef strips',        '6 oz'],
-        ['Black beans',             'half cup'],
-        ['Brown rice',              '3/4 cup cooked'],
-        ['Frozen veggie mix',       '1 cup'],
-        ['Soy sauce low sodium',    '1 tbsp'],
-        ['Sesame oil',              '1 tbsp'],
-        ['Garlic powder + cumin',   'to taste'],
-      ]},
-      evening: { time: '7:30 pm', cal: '~210 cal', items: [
-        ['Kirkland nut butter',     '2 tbsp'],
-        ['Dark chocolate 70%',      '2 squares'],
-      ]},
-    }
-  },
-];
-
-const MEAL_ORDER = [
-  { key: 'breakfast', label: 'BREAK FAST',   cls: 'breakfast', icon: '🍳', threshold: 12 * 60 },
-  { key: 'snack',     label: 'SNACK',         cls: 'snack',     icon: '🥜', threshold: 15 * 60 + 30 },
-  { key: 'dinner',    label: 'DINNER',        cls: 'dinner',    icon: '🍽️', threshold: 18 * 60 + 30 },
-  { key: 'evening',   label: 'EVENING SNACK', cls: 'evening',   icon: '🍫', threshold: 19 * 60 + 30 },
-];
-
-function seededRandom(seed) {
-  let s = seed % 2147483647;
-  s = (s * 16807) % 2147483647;
-  return (s - 1) / 2147483646;
+// ── Utilities ──────────────────────────────────────────────
+function pad(n) { return String(n).padStart(2, '0'); }
+function fmt12(h, m) {
+  const ampm = h < 12 ? 'am' : 'pm';
+  return `${h % 12 || 12}:${pad(m)} ${ampm}`;
 }
-
-function planIndex() {
-  const now = new Date();
-  // Shift back 12 hours so that 12pm acts as the day boundary
-  const shifted = new Date(now.getTime() - 12 * 60 * 60 * 1000);
-  const epoch = new Date(2024, 0, 1);
-  const days = Math.floor((shifted - epoch) / (24 * 60 * 60 * 1000));
-  return ((days % DAYS.length) + DAYS.length) % DAYS.length;
-}
-
-// ── Fasting streak ──────────────────────────────────────────
 function dateStr(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
+function fmtDateShort(str) {
+  const [, m, d] = str.split('-');
+  return `${parseInt(m)}/${parseInt(d)}`;
+}
 
+// ── Fasting streak ─────────────────────────────────────────
 function loadStreak() {
   try { const d = JSON.parse(localStorage.getItem('fastStreak')); return d ? { total: 3, ...d } : { streak: 0, best: 0, total: 3, lastDate: null }; }
   catch { return { streak: 0, best: 0, total: 3, lastDate: null }; }
 }
-
 function claimStreak() {
-  const now   = new Date();
-  const today = dateStr(now);
-  const data  = loadStreak();
-  if (data.lastDate === today) return data; // already claimed
-
-  const yesterday = dateStr(new Date(now.getTime() - 24 * 60 * 60 * 1000));
+  const now = new Date(), today = dateStr(now), data = loadStreak();
+  if (data.lastDate === today) return data;
+  const yesterday = dateStr(new Date(now.getTime() - 86400000));
   const newStreak = data.lastDate === yesterday ? data.streak + 1 : 1;
-  const newBest   = Math.max(newStreak, data.best || 0);
-  const newTotal  = (data.total || 0) + 1;
-  const updated   = { streak: newStreak, best: newBest, total: newTotal, lastDate: today };
+  const updated = { streak: newStreak, best: Math.max(newStreak, data.best || 0), total: (data.total || 0) + 1, lastDate: today };
   localStorage.setItem('fastStreak', JSON.stringify(updated));
   return updated;
 }
 
-function confetti() {
+// ── Weight log ─────────────────────────────────────────────
+function loadWeightLog() {
+  try { return JSON.parse(localStorage.getItem('weightLog')) || []; }
+  catch { return []; }
+}
+function saveWeightEntry(lbs) {
+  const log = loadWeightLog();
+  const today = dateStr(new Date());
+  const idx = log.findIndex(e => e.date === today);
+  if (idx >= 0) log[idx].weight = lbs;
+  else log.push({ date: today, weight: lbs });
+  log.sort((a, b) => a.date.localeCompare(b.date));
+  localStorage.setItem('weightLog', JSON.stringify(log));
+}
+function loadGoal() {
+  const g = parseFloat(localStorage.getItem('weightGoal'));
+  return isNaN(g) ? null : g;
+}
+function saveGoal(g) { localStorage.setItem('weightGoal', String(g)); }
+
+// ── Milestones ─────────────────────────────────────────────
+const MILESTONES = [
+  { lbs: 5,  icon: '🌱', label: '-5 lbs'  },
+  { lbs: 10, icon: '💪', label: '-10 lbs' },
+  { lbs: 15, icon: '🔥', label: '-15 lbs' },
+  { lbs: 20, icon: '⚡', label: '-20 lbs' },
+  { lbs: 25, icon: '🏆', label: '-25 lbs' },
+  { lbs: 30, icon: '👑', label: '-30 lbs' },
+];
+function checkNewMilestones(log) {
+  if (log.length < 2) return [];
+  const lost = log[0].weight - log[log.length - 1].weight;
+  const reached = MILESTONES.filter(m => lost >= m.lbs).map(m => m.lbs);
+  const prev = JSON.parse(localStorage.getItem('reachedMilestones') || '[]');
+  const fresh = reached.filter(m => !prev.includes(m));
+  localStorage.setItem('reachedMilestones', JSON.stringify(reached));
+  return fresh;
+}
+
+// ── Confetti ───────────────────────────────────────────────
+function confetti(count = 80) {
   const colors = ['#FFAA00','#00CCFF','#FF88CC','#88DD88','#FFE066','#55DDBB','#FF6666'];
-  for (let i = 0; i < 80; i++) {
+  for (let i = 0; i < count; i++) {
     const el = document.createElement('div');
     el.className = 'confetti-piece';
-    el.style.left     = Math.random() * 100 + 'vw';
+    el.style.left = Math.random() * 100 + 'vw';
     el.style.background = colors[Math.floor(Math.random() * colors.length)];
-    el.style.width    = (Math.random() * 8 + 6) + 'px';
-    el.style.height   = (Math.random() * 8 + 6) + 'px';
-    el.style.animationDuration  = (Math.random() * 2 + 1.5) + 's';
-    el.style.animationDelay     = (Math.random() * 0.5) + 's';
+    el.style.width  = (Math.random() * 8 + 6) + 'px';
+    el.style.height = (Math.random() * 8 + 6) + 'px';
+    el.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+    el.style.animationDelay   = (Math.random() * 0.5) + 's';
     el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
     document.body.appendChild(el);
     el.addEventListener('animationend', () => el.remove());
   }
 }
+function claimAndCelebrate() { claimStreak(); confetti(); render(); }
 
-function claimAndCelebrate() {
-  claimStreak();
-  confetti();
-  render();
+// ── Weight actions (called from HTML) ─────────────────────
+let chartRange = 30;
+function setRange(r) { chartRange = r; renderWeightSection(); }
+
+function logWeight() {
+  const inp = document.getElementById('weightInput');
+  const val = parseFloat(inp.value);
+  if (isNaN(val) || val < 50 || val > 700) return;
+  saveWeightEntry(val);
+  const log = loadWeightLog();
+  const fresh = checkNewMilestones(log);
+  if (fresh.length) confetti(120);
+  renderWeightSection();
 }
 
-function pad(n) { return String(n).padStart(2, '0'); }
-
-function fmt12(h, m) {
-  const ampm = h < 12 ? 'am' : 'pm';
-  return `${h % 12 || 12}:${pad(m)} ${ampm}`;
+function editWeight() {
+  const log = loadWeightLog();
+  const today = dateStr(new Date());
+  const entry = log.find(e => e.date === today);
+  renderWeightSection(true, entry ? entry.weight : null);
 }
 
+function saveGoalInput() {
+  const inp = document.getElementById('goalInput');
+  const val = parseFloat(inp.value);
+  if (isNaN(val) || val < 50 || val > 700) return;
+  saveGoal(val);
+  renderWeightSection();
+}
+
+// ── SVG Chart ──────────────────────────────────────────────
+function smoothPath(pts) {
+  if (pts.length < 2) return '';
+  let d = `M ${pts[0][0]},${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) {
+    const cp = (pts[i-1][0] + pts[i][0]) / 2;
+    d += ` C ${cp},${pts[i-1][1]} ${cp},${pts[i][1]} ${pts[i][0]},${pts[i][1]}`;
+  }
+  return d;
+}
+
+function buildChart(log) {
+  const entries = log.slice(-chartRange);
+  if (entries.length < 2) {
+    return `<div class="chart-empty"><span>📉</span>Log at least 2 days to see your chart</div>`;
+  }
+
+  const W = 300, H = 110;
+  const PAD = { top: 14, right: 14, bottom: 22, left: 38 };
+  const cW = W - PAD.left - PAD.right;
+  const cH = H - PAD.top - PAD.bottom;
+
+  const weights = entries.map(e => e.weight);
+  const minW = Math.min(...weights), maxW = Math.max(...weights);
+  const range = maxW - minW || 1;
+  const padded = range * 0.15;
+
+  const xS = i => PAD.left + (i / (entries.length - 1)) * cW;
+  const yS = w => PAD.top + cH - ((w - (minW - padded)) / (range + padded * 2)) * cH;
+
+  const pts = entries.map((e, i) => [xS(i), yS(e.weight)]);
+  const line = smoothPath(pts);
+  const area = `M ${pts[0][0]},${H - PAD.bottom} L ` + pts.map(p => `${p[0]},${p[1]}`).join(' L ') + ` L ${pts[pts.length-1][0]},${H - PAD.bottom} Z`;
+
+  const today = dateStr(new Date());
+  const todayIdx = entries.findIndex(e => e.date === today);
+
+  // Y-axis labels (3 levels)
+  const yLabels = [minW, (minW + maxW) / 2, maxW].map(w => ({
+    y: yS(w),
+    label: w.toFixed(1)
+  }));
+
+  // Grid lines
+  const gridLines = yLabels.map(l =>
+    `<line x1="${PAD.left}" y1="${l.y}" x2="${W - PAD.right}" y2="${l.y}" stroke="#2a2a2a" stroke-width="1" stroke-dasharray="3,3"/>`
+  ).join('');
+
+  const yAxisLabels = yLabels.map(l =>
+    `<text x="${PAD.left - 4}" y="${l.y + 3.5}" font-size="8" fill="#444" text-anchor="end">${l.label}</text>`
+  ).join('');
+
+  // X-axis date labels (first and last)
+  const xLabels = [
+    `<text x="${pts[0][0]}" y="${H - 4}" font-size="8" fill="#444" text-anchor="middle">${fmtDateShort(entries[0].date)}</text>`,
+    `<text x="${pts[pts.length-1][0]}" y="${H - 4}" font-size="8" fill="#444" text-anchor="middle">${fmtDateShort(entries[entries.length-1].date)}</text>`,
+  ].join('');
+
+  // Dots
+  const dots = entries.map((e, i) => {
+    const isToday = i === todayIdx;
+    const isLast  = i === entries.length - 1;
+    const r = isToday || isLast ? 4 : 2.5;
+    const fill = isToday ? '#00CCFF' : isLast ? '#FFAA00' : '#1a1a1a';
+    const stroke = isToday ? '#00CCFF' : '#FFAA00';
+    const tip = isToday || isLast
+      ? `<text x="${pts[i][0]}" y="${pts[i][1] - 8}" font-size="9" fill="${stroke}" text-anchor="middle" font-weight="700">${e.weight}</text>`
+      : '';
+    return `${tip}<circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>`;
+  }).join('');
+
+  // Trend arrow in top-right
+  const first = entries[0].weight, last = entries[entries.length-1].weight;
+  const diff = last - first;
+  const trendColor = diff < 0 ? '#88DD88' : diff > 0 ? '#FF6666' : '#555';
+  const trendArrow = diff < 0 ? '▼' : diff > 0 ? '▲' : '—';
+  const trendText = `${trendArrow} ${Math.abs(diff).toFixed(1)} lbs`;
+
+  return `
+    <div class="weight-svg-wrap">
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFAA00" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#FFAA00" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        ${gridLines}
+        ${yAxisLabels}
+        ${xLabels}
+        <path d="${area}" fill="url(#areaGrad)"/>
+        <path d="${line}" fill="none" stroke="#FFAA00" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+        ${dots}
+        <text x="${W - PAD.right}" y="${PAD.top + 2}" font-size="9" fill="${trendColor}" text-anchor="end" font-weight="700">${trendText}</text>
+      </svg>
+    </div>`;
+}
+
+// ── Weight section renderer ────────────────────────────────
+function renderWeightSection(forceEdit = false, editPrefill = null) {
+  const log     = loadWeightLog();
+  const goal    = loadGoal();
+  const today   = dateStr(new Date());
+  const todayEntry = log.find(e => e.date === today);
+  const reached = JSON.parse(localStorage.getItem('reachedMilestones') || '[]');
+
+  // Stats
+  const hasData = log.length > 0;
+  const current = hasData ? log[log.length - 1].weight : null;
+  const start   = hasData ? log[0].weight : null;
+  const totalChange = hasData && log.length > 1 ? current - start : null;
+
+  let trend7 = null;
+  if (log.length >= 2) {
+    const recent = log.slice(-7);
+    const older  = log.length >= 14 ? log.slice(-14, -7) : null;
+    if (older && older.length > 0) {
+      const avgRecent = recent.reduce((s, e) => s + e.weight, 0) / recent.length;
+      const avgOlder  = older.reduce((s, e) => s + e.weight, 0) / older.length;
+      trend7 = avgRecent - avgOlder;
+    }
+  }
+
+  // Entry card HTML
+  let entryHTML;
+  if (!todayEntry || forceEdit) {
+    const pre = editPrefill != null ? editPrefill : (todayEntry ? todayEntry.weight : '');
+    entryHTML = `
+      <div class="weight-entry-header">
+        <span class="weight-entry-icon">⚖️</span>
+        <div class="weight-entry-title">TODAY'S WEIGHT</div>
+        ${todayEntry ? `<div class="weight-today-badge">${todayEntry.weight} lbs</div>` : ''}
+      </div>
+      <div class="weight-input-row">
+        <input type="number" id="weightInput" placeholder="185.0" step="0.1" min="50" max="700" value="${pre}" inputmode="decimal">
+        <button class="weight-log-btn" onclick="logWeight()">LOG</button>
+      </div>`;
+  } else {
+    const changeFromPrev = log.length >= 2
+      ? todayEntry.weight - log[log.length - 2].weight
+      : null;
+    const changeStr = changeFromPrev !== null
+      ? (changeFromPrev < 0
+          ? `<span style="color:var(--green)">▼ ${Math.abs(changeFromPrev).toFixed(1)} lbs</span>`
+          : changeFromPrev > 0
+            ? `<span style="color:var(--red)">▲ ${Math.abs(changeFromPrev).toFixed(1)} lbs</span>`
+            : `<span style="color:var(--dim)">— no change</span>`)
+      : '';
+    entryHTML = `
+      <div class="weight-entry-header">
+        <span class="weight-entry-icon">⚖️</span>
+        <div class="weight-entry-title">TODAY'S WEIGHT</div>
+      </div>
+      <div class="weight-logged-row">
+        <div>
+          <div class="weight-logged-val">${todayEntry.weight}<span class="weight-logged-unit">lbs</span></div>
+          <div class="weight-logged-date">${changeStr}</div>
+        </div>
+        <button class="weight-edit-btn" onclick="editWeight()">✏️ edit</button>
+      </div>`;
+  }
+
+  // Stats HTML
+  const fmtChange = v => {
+    if (v === null) return { val: '--', cls: 'neutral' };
+    const sign = v < 0 ? '▼ ' : v > 0 ? '▲ ' : '';
+    return { val: `${sign}${Math.abs(v).toFixed(1)}`, cls: v < 0 ? 'positive' : v > 0 ? 'negative' : 'neutral' };
+  };
+  const chg  = fmtChange(totalChange);
+  const t7   = fmtChange(trend7);
+  const statsHTML = `
+    <div class="stat-block">
+      <div class="stat-val">${start ? start.toFixed(1) : '--'}</div>
+      <div class="stat-label">start</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-val">${current ? current.toFixed(1) : '--'}</div>
+      <div class="stat-label">current</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-val ${chg.cls}">${chg.val}</div>
+      <div class="stat-label">total</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-val ${t7.cls}">${t7.val}</div>
+      <div class="stat-label">7-day avg</div>
+    </div>`;
+
+  // Chart HTML
+  const chartBtns = [14, 30, 90].map(r =>
+    `<button class="chart-range-btn${chartRange === r ? ' active' : ''}" onclick="setRange(${r})">${r}d</button>`
+  ).join('');
+  const chartContent = buildChart(log);
+
+  // Goal HTML
+  let goalHTML;
+  if (goal === null) {
+    goalHTML = `
+      <div class="goal-header"><div class="goal-title">🎯 SET GOAL WEIGHT</div></div>
+      <div class="goal-set-row">
+        <input type="number" id="goalInput" placeholder="165.0" step="0.1" min="50" max="700" inputmode="decimal">
+        <button class="goal-set-btn" onclick="saveGoalInput()">SET</button>
+      </div>`;
+  } else if (!current) {
+    goalHTML = `
+      <div class="goal-header">
+        <div class="goal-title">🎯 GOAL: ${goal} lbs</div>
+        <button class="goal-edit-btn" onclick="clearGoal()">✏️</button>
+      </div>
+      <div class="goal-no-current">Log your first weight to see progress</div>`;
+  } else {
+    const totalNeeded = Math.abs(start - goal);
+    const totalDone   = Math.abs(current - goal) < Math.abs(start - goal) ? Math.abs(start - current) : 0;
+    const pct = totalNeeded > 0 ? Math.min(100, Math.max(0, (totalDone / totalNeeded) * 100)) : 100;
+    const toGo = (current - goal).toFixed(1);
+    const toGoStr = parseFloat(toGo) <= 0
+      ? `<strong style="color:var(--green)">🎉 Goal reached!</strong>`
+      : `<strong>${Math.abs(toGo)} lbs</strong> to go`;
+    goalHTML = `
+      <div class="goal-header">
+        <div class="goal-title">🎯 GOAL: ${goal} lbs</div>
+        <button class="goal-edit-btn" onclick="clearGoal()">✏️</button>
+      </div>
+      <div class="goal-progress-wrap">
+        <div class="goal-progress-labels">
+          <span>${start ? start.toFixed(1) : '--'}</span>
+          <span>${toGoStr}</span>
+          <span>${goal}</span>
+        </div>
+        <div class="goal-track"><div class="goal-fill" style="width:${pct.toFixed(1)}%"></div></div>
+      </div>
+      <div class="goal-stats-row">
+        <span>${pct.toFixed(0)}% of the way there</span>
+        <span>current: <strong>${current.toFixed(1)}</strong></span>
+      </div>`;
+  }
+
+  // Milestones HTML
+  const msHTML = MILESTONES.map(m => {
+    const unlocked = reached.includes(m.lbs);
+    return `
+      <div class="milestone-badge${unlocked ? ' unlocked' : ''}">
+        <div class="ms-icon">${m.icon}</div>
+        <div class="ms-label">${m.label}</div>
+      </div>`;
+  }).join('');
+
+  const section = document.getElementById('weightSection');
+  if (!section) return;
+  section.innerHTML = `
+    <div class="weight-entry-card">${entryHTML}</div>
+    <div class="weight-stats-card">${statsHTML}</div>
+    <div class="weight-chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Weight History</div>
+        <div class="chart-range-btns">${chartBtns}</div>
+      </div>
+      ${chartContent}
+    </div>
+    <div class="weight-goal-card">${goalHTML}</div>
+    <div class="milestones-card">
+      <div class="milestones-title">Milestones</div>
+      <div class="milestones-row">${msHTML}</div>
+    </div>`;
+
+  // Autofocus input if editing
+  if (!todayEntry || forceEdit) {
+    const inp = document.getElementById('weightInput');
+    if (inp && forceEdit) inp.focus();
+  }
+}
+
+function clearGoal() {
+  localStorage.removeItem('weightGoal');
+  renderWeightSection();
+}
+
+// ── Main render ────────────────────────────────────────────
 function render() {
+  if (document.activeElement && (
+    document.activeElement.id === 'weightInput' ||
+    document.activeElement.id === 'goalInput'
+  )) return;
+
   const now = new Date();
   const h = now.getHours(), m = now.getMinutes();
-  const day = DAYS[planIndex()];
-  let html = '';
-
-  // Streak card
-  const now2   = new Date();
-  const today2 = dateStr(now2);
-  const sd     = loadStreak();
-  const isPast12  = now2.getHours() >= 12;
+  const today2 = dateStr(now);
+  const sd = loadStreak();
+  const isPast12 = h >= 12;
   const claimedToday = sd.lastDate === today2;
   const fireEmoji = sd.streak >= 30 ? '🔥🔥🔥' : sd.streak >= 7 ? '🔥🔥' : '🔥';
   const streakSub = claimedToday
@@ -533,30 +829,15 @@ function render() {
     : `${sd.streak} day${sd.streak !== 1 ? 's' : ''} — keep it going!`;
 
   let btnClass, btnText;
-  if (claimedToday)   { btnClass = 'done';  btnText = '✓ Fasted today'; }
-  else if (isPast12)  { btnClass = 'ready'; btnText = '🔥 I fasted today'; }
-  else                { btnClass = 'early'; btnText = `⏳ Window opens at 12:00 pm`; }
+  if (claimedToday)  { btnClass = 'done';  btnText = '✓ Fasted today'; }
+  else if (isPast12) { btnClass = 'ready'; btnText = '🔥 I fasted today'; }
+  else               { btnClass = 'early'; btnText = `⏳ Window opens at 12:00 pm`; }
 
-  html += `
-    <div class="streak-card">
-      <div class="streak-fire">${fireEmoji}</div>
-      <div class="streak-info">
-        <div class="streak-num">${sd.streak}<span>day streak</span></div>
-        <div class="streak-sub">${streakSub}</div>
-        <button class="streak-btn ${btnClass}"
-          onclick="${claimedToday || !isPast12 ? '' : 'claimAndCelebrate()'}"
-        >${btnText}</button>
-      </div>
-      <div class="streak-best">best<br><strong>${sd.best}</strong><br><br>total<br><strong>${sd.total || 0}</strong></div>
-    </div>`;
-
-  // Chicken progress bar — eating window 12pm (720) to 8pm (1200)
-  const WINDOW_START = 12 * 60;
-  const WINDOW_END   = 20 * 60;
-  const totalMins    = h * 60 + m;
-  const pct          = Math.min(100, Math.max(0, (totalMins - WINDOW_START) / (WINDOW_END - WINDOW_START) * 100));
-  const isFasting    = totalMins < WINDOW_START;
-  const isDone       = totalMins >= WINDOW_END;
+  const WINDOW_START = 12 * 60, WINDOW_END = 20 * 60;
+  const totalMins = h * 60 + m;
+  const pct = Math.min(100, Math.max(0, (totalMins - WINDOW_START) / (WINDOW_END - WINDOW_START) * 100));
+  const isFasting = totalMins < WINDOW_START;
+  const isDone    = totalMins >= WINDOW_END;
 
   let timeLabel;
   if (isFasting) {
@@ -569,7 +850,19 @@ function render() {
     timeLabel = `<span>${Math.floor(rem/60)}h ${pad(rem%60)}m</span> left in window`;
   }
 
-  html += `
+  document.body.innerHTML = `
+    <div class="streak-card">
+      <div class="streak-fire">${fireEmoji}</div>
+      <div class="streak-info">
+        <div class="streak-num">${sd.streak}<span>day streak</span></div>
+        <div class="streak-sub">${streakSub}</div>
+        <button class="streak-btn ${btnClass}"
+          onclick="${claimedToday || !isPast12 ? '' : 'claimAndCelebrate()'}"
+        >${btnText}</button>
+      </div>
+      <div class="streak-best">best<br><strong>${sd.best}</strong><br><br>total<br><strong>${sd.total || 0}</strong></div>
+    </div>
+
     <div class="chicken-bar">
       <div class="chicken-bar-labels">
         <span class="${!isFasting && !isDone ? 'active-label' : ''}">12 pm</span>
@@ -581,43 +874,13 @@ function render() {
         <div class="chicken-icon" style="left:${Math.max(4, Math.min(96, pct))}%">🐔</div>
       </div>
       <div class="chicken-time">${timeLabel}</div>
-    </div>`;
+    </div>
 
-  const isTuesday = now.getDay() === 2;
-  if (isTuesday) {
-    html += `
-      <div class="fasting-card">
-        <div class="fasting-title">FREE DAY</div>
-        <div class="fasting-sub">Eat whatever you want today — enjoy it!</div>
-      </div>`;
-  } else {
-    for (const { key, label, cls, icon } of MEAL_ORDER) {
-      const meal = day.meals[key];
-        let items = '';
-        for (const [name, qty] of meal.items) {
-          items += `
-            <div class="food-item">
-              <span class="food-name">${name}</span>
-              ${qty ? `<span class="food-dots"></span><span class="food-qty">${qty}</span>` : ''}
-            </div>`;
-        }
-        html += `
-          <div class="meal-card ${cls}">
-            <div class="meal-header">
-              <span class="meal-icon">${icon}</span>
-              <div class="meal-info">
-                <div class="meal-label">${label}</div>
-                <div class="meal-time">${meal.time}</div>
-              </div>
-              <div class="meal-cal">${meal.cal}</div>
-            </div>
-            <div class="food-list">${items}</div>
-          </div>`;
-    }
-  }
+    <div id="weightSection"></div>
 
-  html += `<div class="footer">updated ${fmt12(h, m)}</div>`;
-  document.body.innerHTML = html;
+    <div class="footer">updated ${fmt12(h, m)}</div>`;
+
+  renderWeightSection();
 }
 
 render();
